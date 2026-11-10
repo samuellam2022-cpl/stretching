@@ -1,12 +1,14 @@
 import './style.css';
 import { getStretch } from './data';
 import { toggleFavourite } from './favourites';
+import { applyDocumentLang, getLang, setLang, t, type Lang } from './i18n';
 import { resetTimerUI, startTimer, stopTimer } from './timer';
 import {
   FILTERS,
   favouritesView,
   homeView,
   notFoundView,
+  favLabel,
   partView,
   starIcon,
   stretchView,
@@ -17,30 +19,48 @@ import {
 history.scrollRestoration = 'manual';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
+applyDocumentLang();
 
 app.innerHTML = `
   <header class="topbar">
-    <button class="back-btn" data-back hidden aria-label="Back">
+    <button class="back-btn" data-back hidden>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span>Back</span>
+      <span data-i18n="back"></span>
     </button>
     <h1 class="topbar-title" data-title></h1>
+    <button class="lang-btn" data-lang-toggle>
+      <span data-lang="zh" lang="zh-HK">中</span><span class="lang-sep" aria-hidden="true">／</span><span data-lang="en" lang="en">EN</span>
+    </button>
   </header>
   <main class="content" data-content></main>
   <nav class="tabbar" aria-label="Main">
     <a class="tab" data-tab="browse" href="#/">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>
-      <span>Body parts</span>
+      <span data-i18n="tabBodyParts"></span>
     </a>
     <a class="tab" data-tab="favourites" href="#/favourites">
       ${starIcon(false)}
-      <span>Favourites</span>
+      <span data-i18n="tabFavourites"></span>
     </a>
   </nav>`;
 
 const titleEl = app.querySelector<HTMLElement>('[data-title]')!;
 const contentEl = app.querySelector<HTMLElement>('[data-content]')!;
 const backBtn = app.querySelector<HTMLButtonElement>('[data-back]')!;
+
+const langBtn = app.querySelector<HTMLButtonElement>('[data-lang-toggle]')!;
+
+/** Update the fixed parts of the screen (top bar, tab bar) for the current language. */
+function renderShell(): void {
+  app.querySelectorAll<HTMLElement>('[data-i18n]').forEach((el) => {
+    el.textContent = t(el.dataset.i18n as Parameters<typeof t>[0]);
+  });
+  const lang = getLang();
+  langBtn.querySelectorAll<HTMLElement>('[data-lang]').forEach((el) => {
+    el.classList.toggle('on', el.dataset.lang === lang);
+  });
+  langBtn.setAttribute('aria-label', `${t('langToggle')}: ${lang === 'zh' ? 'English' : '中文'}`);
+}
 
 let current: View | null = null;
 let currentRoute = '';
@@ -74,7 +94,8 @@ function render(): void {
   current = resolve(hash);
 
   titleEl.textContent = current.title;
-  document.title = current.title === 'Stretching' ? 'Stretching' : `${current.title} · Stretching`;
+  const appName = t('appName');
+  document.title = current.title === appName ? appName : `${current.title} · ${appName}`;
   backBtn.hidden = !current.parent;
   contentEl.innerHTML = current.html;
   app.querySelectorAll<HTMLElement>('[data-tab]').forEach((t) => {
@@ -108,7 +129,7 @@ app.addEventListener('click', (e) => {
       return;
     }
     fav.setAttribute('aria-pressed', String(on));
-    fav.setAttribute('aria-label', `${on ? 'Remove from' : 'Add to'} favourites`);
+    fav.setAttribute('aria-label', favLabel(on));
     fav.innerHTML = starIcon(on);
     fav.classList.remove('pop');
     void fav.offsetWidth; // restart animation
@@ -125,6 +146,14 @@ app.addEventListener('click', (e) => {
     if (next === location.hash) return;
     replacing = true;
     location.replace(next);
+    return;
+  }
+
+  if (target.closest('[data-lang-toggle]')) {
+    const next: Lang = getLang() === 'zh' ? 'en' : 'zh';
+    setLang(next);
+    renderShell();
+    render(); // same route, so scroll position is kept
     return;
   }
 
@@ -156,4 +185,5 @@ document.addEventListener('visibilitychange', () => {
 // Enables :active styles on iOS Safari.
 document.addEventListener('touchstart', () => {}, { passive: true });
 
+renderShell();
 render();

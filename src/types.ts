@@ -9,33 +9,39 @@ export type BodyPartId =
   | 'back-thigh'
   | 'calves';
 
+/** Text in both languages. "zh" is Traditional Chinese (Hong Kong). */
+export interface Localized {
+  en: string;
+  zh: string;
+}
+
 /** How the stretch is done. */
 export type StretchType = 'solo' | 'partner' | 'equipment';
 
 export interface BodyPart {
   id: BodyPartId;
-  name: string;
+  name: Localized;
   /** A short emoji or symbol shown on the body-part tile. */
   icon: string;
-  description: string;
+  description: Localized;
 }
 
 export interface Stretch {
   /** Unique, URL-safe id, e.g. "neck-side-bend". Favourites are stored by this id. */
   id: string;
-  name: string;
+  name: Localized;
   bodyPart: BodyPartId;
   type: StretchType;
   /** One-line description shown in lists. */
-  summary: string;
+  summary: Localized;
   /** How long to hold, in seconds. */
   holdSeconds: number;
   /** True if the stretch is done on one side, then repeated on the other. */
   perSide: boolean;
-  /** Items needed (only for type "equipment"), e.g. ["Strap or towel"]. */
-  equipment?: string[];
-  steps: string[];
-  safety: string[];
+  /** Items needed (only for type "equipment"). */
+  equipment?: Localized[];
+  steps: Localized[];
+  safety: Localized[];
 }
 
 export interface StretchData {

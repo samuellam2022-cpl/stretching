@@ -1,3 +1,5 @@
+import { t } from './i18n';
+
 /**
  * Hold timer for a stretch. Counts down holdSeconds, and for per-side stretches
  * runs a short "switch sides" pause and a second countdown.
@@ -53,11 +55,11 @@ export function startTimer(root: HTMLElement, holdSeconds: number, perSide: bool
   stopTimer();
   const phases: Phase[] = perSide
     ? [
-        { label: 'First side', seconds: holdSeconds, kind: 'hold' },
-        { label: 'Switch sides', seconds: SWITCH_SECONDS, kind: 'switch' },
-        { label: 'Second side', seconds: holdSeconds, kind: 'hold' },
+        { label: t('timerFirst'), seconds: holdSeconds, kind: 'hold' },
+        { label: t('timerSwitch'), seconds: SWITCH_SECONDS, kind: 'switch' },
+        { label: t('timerSecond'), seconds: holdSeconds, kind: 'hold' },
       ]
-    : [{ label: 'Hold', seconds: holdSeconds, kind: 'hold' }];
+    : [{ label: t('timerHold'), seconds: holdSeconds, kind: 'hold' }];
 
   const timeEl = root.querySelector<HTMLElement>('[data-timer-time]')!;
   const labelEl = root.querySelector<HTMLElement>('[data-timer-label]')!;
@@ -88,17 +90,17 @@ export function startTimer(root: HTMLElement, holdSeconds: number, perSide: bool
       } else {
         beep(990, 400);
         stopTimer();
-        labelEl.textContent = 'Done – nice work!';
+        labelEl.textContent = t('timerDone');
         timeEl.textContent = '✓';
         root.dataset.kind = 'done';
-        btn.textContent = 'Start again';
+        btn.textContent = t('timerAgain');
         btn.dataset.running = 'false';
       }
     }
   };
 
   root.dataset.active = 'true';
-  btn.textContent = 'Stop';
+  btn.textContent = t('timerStop');
   btn.dataset.running = 'true';
   beep(660, 80);
   void keepAwake(true);
@@ -111,10 +113,10 @@ export function resetTimerUI(root: HTMLElement, holdSeconds: number): void {
   stopTimer();
   root.dataset.kind = 'idle';
   root.querySelector<HTMLElement>('[data-timer-time]')!.textContent = String(holdSeconds);
-  root.querySelector<HTMLElement>('[data-timer-label]')!.textContent = 'Ready';
+  root.querySelector<HTMLElement>('[data-timer-label]')!.textContent = t('timerReady');
   root.querySelector<SVGCircleElement>('[data-timer-ring]')!.style.strokeDashoffset = '0';
   const btn = root.querySelector<HTMLButtonElement>('[data-timer-toggle]')!;
-  btn.textContent = 'Start timer';
+  btn.textContent = t('timerStart');
   btn.dataset.running = 'false';
 }
 
