@@ -1,0 +1,648 @@
+{
+  "bodyParts": [
+    { "id": "neck", "name": "Neck", "icon": "🦒", "description": "Sides and back of the neck" },
+    { "id": "shoulders", "name": "Shoulders", "icon": "💪", "description": "Shoulders, chest and upper arms" },
+    { "id": "back", "name": "Back", "icon": "🧍", "description": "Upper and middle back" },
+    { "id": "lower-back", "name": "Lower back", "icon": "🪑", "description": "Lumbar spine and surrounding muscles" },
+    { "id": "hips", "name": "Hips", "icon": "🦋", "description": "Glutes, hip flexors and inner hips" },
+    { "id": "front-thigh", "name": "Front of thigh", "icon": "🦵", "description": "Quadriceps" },
+    { "id": "back-thigh", "name": "Back of thigh", "icon": "🏃", "description": "Hamstrings" },
+    { "id": "calves", "name": "Calves", "icon": "🦶", "description": "Calf muscles and Achilles area" }
+  ],
+  "stretches": [
+    {
+      "id": "neck-side-bend",
+      "name": "Neck side bend",
+      "bodyPart": "neck",
+      "type": "solo",
+      "summary": "Gently tilt your ear toward your shoulder.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Sit or stand tall with your shoulders relaxed and down.",
+        "Slowly tilt your right ear toward your right shoulder.",
+        "For a deeper stretch, rest your right hand lightly on the left side of your head.",
+        "Hold, breathing slowly, then return to centre and switch sides."
+      ],
+      "safety": [
+        "Do not pull hard on your head – the weight of your hand is enough.",
+        "Keep the opposite shoulder down; don't shrug.",
+        "Stop if you feel tingling or numbness down your arm."
+      ]
+    },
+    {
+      "id": "neck-levator-scapulae",
+      "name": "Look-down neck stretch",
+      "bodyPart": "neck",
+      "type": "solo",
+      "summary": "Turn your nose toward your armpit to stretch the back of the neck.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Sit tall and turn your head about 45° to the right.",
+        "Drop your chin, as if looking toward your right armpit.",
+        "Place your right hand on the back of your head and let its weight add a gentle stretch.",
+        "Hold, then slowly lift your head and repeat on the other side."
+      ],
+      "safety": [
+        "Move slowly into and out of the stretch.",
+        "Keep the stretch mild – you should feel it along the back and side of the neck, not sharp pain."
+      ]
+    },
+    {
+      "id": "neck-partner-side-stretch",
+      "name": "Partner-assisted neck stretch",
+      "bodyPart": "neck",
+      "type": "partner",
+      "summary": "Partner steadies your shoulder while you tilt your head away.",
+      "holdSeconds": 20,
+      "perSide": true,
+      "steps": [
+        "Sit on a chair; your partner stands behind you.",
+        "Your partner rests one hand lightly on top of your left shoulder to keep it down.",
+        "Slowly tilt your right ear toward your right shoulder yourself – your partner does not push your head.",
+        "Hold, then come back to centre and switch sides."
+      ],
+      "safety": [
+        "The partner only stabilises the shoulder – never press on the head or neck.",
+        "Agree on a clear 'stop' word before starting.",
+        "Not recommended if you have a recent neck injury."
+      ]
+    },
+    {
+      "id": "neck-towel-chin-tuck",
+      "name": "Towel chin tuck",
+      "bodyPart": "neck",
+      "type": "equipment",
+      "summary": "Use a towel behind the neck to guide a gentle chin tuck.",
+      "holdSeconds": 20,
+      "perSide": false,
+      "equipment": ["Small towel"],
+      "steps": [
+        "Sit tall and place a rolled towel behind your neck, holding one end in each hand.",
+        "Pull the towel ends gently forward to support your neck.",
+        "Glide your chin straight back, making a 'double chin', without tilting your head down.",
+        "Hold, then relax. You should feel a stretch at the base of the skull."
+      ],
+      "safety": [
+        "Keep the movement small – this is a glide, not a nod.",
+        "The towel is for support, not for pulling your head."
+      ]
+    },
+
+    {
+      "id": "shoulders-cross-body",
+      "name": "Cross-body shoulder stretch",
+      "bodyPart": "shoulders",
+      "type": "solo",
+      "summary": "Draw one arm across your chest to stretch the back of the shoulder.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Stand or sit tall.",
+        "Bring your right arm straight across your chest at shoulder height.",
+        "Use your left forearm above (not on) the elbow to draw the arm closer to your body.",
+        "Hold, then switch arms."
+      ],
+      "safety": [
+        "Keep your shoulder down, away from your ear.",
+        "Avoid pressing directly on the elbow joint."
+      ]
+    },
+    {
+      "id": "shoulders-wall-chest",
+      "name": "Wall chest stretch",
+      "bodyPart": "shoulders",
+      "type": "solo",
+      "summary": "Open the front of the shoulder and chest against a wall.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Stand side-on to a wall and place your right palm on it at shoulder height, arm straight behind you.",
+        "Slowly turn your feet and body away from the wall until you feel a stretch across the chest and front of the shoulder.",
+        "Keep your chest lifted and breathe.",
+        "Hold, then turn back and switch sides."
+      ],
+      "safety": [
+        "Rotate gently – don't force the shoulder backwards.",
+        "Lower your hand if you feel pinching at the front of the shoulder."
+      ]
+    },
+    {
+      "id": "shoulders-partner-chest-opener",
+      "name": "Partner chest opener",
+      "bodyPart": "shoulders",
+      "type": "partner",
+      "summary": "Partner gently draws your arms back to open the chest.",
+      "holdSeconds": 20,
+      "perSide": false,
+      "steps": [
+        "Sit tall on the floor or a stool with your hands clasped behind your head.",
+        "Your partner stands behind you and holds your elbows.",
+        "Your partner slowly draws your elbows backward until you feel a stretch across the chest.",
+        "Hold, breathing slowly, then your partner releases gradually."
+      ],
+      "safety": [
+        "Partner moves slowly and stops the moment you say so.",
+        "Don't let your head be pushed forward – keep your neck neutral.",
+        "Avoid if you have a history of shoulder dislocation."
+      ]
+    },
+    {
+      "id": "shoulders-towel-overhead",
+      "name": "Towel overhead stretch",
+      "bodyPart": "shoulders",
+      "type": "equipment",
+      "summary": "Hold a towel behind your back to stretch shoulders and triceps.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "equipment": ["Towel or strap"],
+      "steps": [
+        "Hold one end of a towel in your right hand and lift it overhead, letting the towel hang down your back.",
+        "Reach behind your lower back with your left hand and grab the other end.",
+        "Gently pull down with the left hand to stretch the right shoulder and triceps.",
+        "Then pull up with the right hand to stretch the left shoulder. Hold, then swap hands."
+      ],
+      "safety": [
+        "Walk your hands closer together only as far as is comfortable.",
+        "Keep your back from arching – brace your stomach lightly."
+      ]
+    },
+
+    {
+      "id": "back-cat-cow",
+      "name": "Cat–cow",
+      "bodyPart": "back",
+      "type": "solo",
+      "summary": "Flow between rounding and arching your spine on hands and knees.",
+      "holdSeconds": 30,
+      "perSide": false,
+      "steps": [
+        "Start on hands and knees, hands under shoulders and knees under hips.",
+        "Breathe in: let your belly lower and lift your chest and tailbone (cow).",
+        "Breathe out: round your back toward the ceiling and tuck your chin (cat).",
+        "Move slowly between the two positions for the full time."
+      ],
+      "safety": [
+        "Move only within a pain-free range.",
+        "Place a folded towel under your knees if they're sensitive."
+      ]
+    },
+    {
+      "id": "back-childs-pose",
+      "name": "Child's pose",
+      "bodyPart": "back",
+      "type": "solo",
+      "summary": "Sit back onto your heels and reach forward to lengthen the back.",
+      "holdSeconds": 45,
+      "perSide": false,
+      "steps": [
+        "Kneel on the floor with your big toes together and knees apart.",
+        "Sit your hips back toward your heels.",
+        "Walk your hands forward and lower your chest toward the floor.",
+        "Rest your forehead down and breathe into your back."
+      ],
+      "safety": [
+        "Put a cushion between your heels and hips if your knees are tight.",
+        "Skip this if you have a knee injury."
+      ]
+    },
+    {
+      "id": "back-partner-lat-pull",
+      "name": "Partner back pull",
+      "bodyPart": "back",
+      "type": "partner",
+      "summary": "Hold hands and lean back away from each other to stretch the upper back.",
+      "holdSeconds": 30,
+      "perSide": false,
+      "steps": [
+        "Stand facing your partner, about an arm's length apart, feet hip-width.",
+        "Hold each other's wrists firmly.",
+        "Both bend your knees slightly and sit your hips back at the same time, rounding your upper backs.",
+        "Hold, then both stand up slowly together."
+      ],
+      "safety": [
+        "Use a firm wrist grip so nobody slips.",
+        "Lean back at the same pace and come up together – never let go suddenly.",
+        "Choose a partner of a similar weight."
+      ]
+    },
+    {
+      "id": "back-foam-roller-extension",
+      "name": "Foam roller upper-back extension",
+      "bodyPart": "back",
+      "type": "equipment",
+      "summary": "Lean back over a foam roller to open the upper back.",
+      "holdSeconds": 30,
+      "perSide": false,
+      "equipment": ["Foam roller"],
+      "steps": [
+        "Sit on the floor with a foam roller behind you, across your upper back just below the shoulder blades.",
+        "Support your head with your hands, elbows pointing forward.",
+        "Keep your hips on the floor and gently lean back over the roller.",
+        "Hold, breathing out as you relax. Move the roller up a few centimetres and repeat if you like."
+      ],
+      "safety": [
+        "Keep the roller on your upper and middle back – never under your lower back or neck.",
+        "Support your head the whole time."
+      ]
+    },
+
+    {
+      "id": "lower-back-knee-to-chest",
+      "name": "Knee-to-chest",
+      "bodyPart": "lower-back",
+      "type": "solo",
+      "summary": "Hug one knee in while lying on your back.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Lie on your back with both knees bent and feet flat.",
+        "Bring your right knee toward your chest, holding behind the thigh or on the shin.",
+        "Keep your lower back relaxed against the floor.",
+        "Hold, then lower and switch legs. You can also hug both knees together."
+      ],
+      "safety": [
+        "Hold behind the thigh if you have knee problems.",
+        "Keep your head resting on the floor."
+      ]
+    },
+    {
+      "id": "lower-back-supine-twist",
+      "name": "Lying spinal twist",
+      "bodyPart": "lower-back",
+      "type": "solo",
+      "summary": "Let your knees drop to one side while your shoulders stay down.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Lie on your back with knees bent and feet flat, arms out wide in a T.",
+        "Keeping your knees together, slowly lower them to the right.",
+        "Turn your head to the left if it's comfortable.",
+        "Hold, then bring your knees back to centre and lower them to the other side."
+      ],
+      "safety": [
+        "Keep both shoulders on the floor.",
+        "Place a pillow under your knees if they don't reach the floor.",
+        "Twist gently – avoid if twisting aggravates back pain."
+      ]
+    },
+    {
+      "id": "lower-back-partner-knee-hug",
+      "name": "Partner-assisted knee hug",
+      "bodyPart": "lower-back",
+      "type": "partner",
+      "summary": "Partner gently supports both knees toward your chest.",
+      "holdSeconds": 20,
+      "perSide": false,
+      "steps": [
+        "Lie on your back and draw both knees toward your chest.",
+        "Your partner kneels at your feet and places their hands on your shins.",
+        "Your partner leans in gently to bring your knees slightly closer, only as far as you guide them.",
+        "Hold, then your partner slowly releases."
+      ],
+      "safety": [
+        "The partner applies very light pressure – this should never hurt.",
+        "Keep your tailbone on or near the floor.",
+        "Not suitable if you have a disc injury unless your physio approves it."
+      ]
+    },
+    {
+      "id": "lower-back-ball-drape",
+      "name": "Exercise ball back drape",
+      "bodyPart": "lower-back",
+      "type": "equipment",
+      "summary": "Lie face-down over an exercise ball to round and relax the back.",
+      "holdSeconds": 30,
+      "perSide": false,
+      "equipment": ["Exercise ball"],
+      "steps": [
+        "Kneel in front of an exercise ball.",
+        "Lie your stomach and chest over the ball, letting your back round.",
+        "Rest your hands or fingertips on the floor in front for balance.",
+        "Hold, breathing deeply into your lower back."
+      ],
+      "safety": [
+        "Keep your knees or hands on the floor for stability at all times.",
+        "Use a ball that's the right size so you aren't overreaching."
+      ]
+    },
+
+    {
+      "id": "hips-figure-four",
+      "name": "Lying figure-four",
+      "bodyPart": "hips",
+      "type": "solo",
+      "summary": "Cross one ankle over the opposite knee to stretch the glute.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Lie on your back with both knees bent and feet flat.",
+        "Cross your right ankle over your left knee, letting the right knee open out.",
+        "Lift your left foot off the floor and hold behind your left thigh.",
+        "Gently draw the left thigh toward you. Hold, then switch sides."
+      ],
+      "safety": [
+        "Flex the top foot to protect the knee.",
+        "If you feel pain in the knee rather than the hip, ease off."
+      ]
+    },
+    {
+      "id": "hips-kneeling-hip-flexor",
+      "name": "Kneeling hip flexor stretch",
+      "bodyPart": "hips",
+      "type": "solo",
+      "summary": "A half-kneeling lunge to stretch the front of the hip.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Kneel on your right knee with your left foot flat in front, both knees at about 90°.",
+        "Tuck your tailbone under slightly and squeeze your right glute.",
+        "Shift your hips forward a little until you feel a stretch at the front of the right hip.",
+        "Hold, keeping your chest tall, then switch sides."
+      ],
+      "safety": [
+        "Put a cushion or folded towel under the back knee.",
+        "Don't let your lower back arch – the stretch comes from the tailbone tuck."
+      ]
+    },
+    {
+      "id": "hips-partner-butterfly",
+      "name": "Partner butterfly stretch",
+      "bodyPart": "hips",
+      "type": "partner",
+      "summary": "Partner gently presses your knees outward in a butterfly sit.",
+      "holdSeconds": 20,
+      "perSide": false,
+      "steps": [
+        "Sit tall with the soles of your feet together and knees falling out to the sides.",
+        "Your partner kneels in front of you and places their hands on your inner knees.",
+        "Your partner presses gently and slowly toward the floor while you relax.",
+        "Hold, then your partner releases gradually."
+      ],
+      "safety": [
+        "Pressure goes on the knees' inner side, never on the joint itself.",
+        "Use a 'stop' word and keep pressure light.",
+        "Avoid if you have groin or knee injuries."
+      ]
+    },
+    {
+      "id": "hips-supported-pigeon",
+      "name": "Supported pigeon pose",
+      "bodyPart": "hips",
+      "type": "equipment",
+      "summary": "Pigeon pose with a block or cushion under the hip for support.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "equipment": ["Yoga block or firm cushion"],
+      "steps": [
+        "From hands and knees, bring your right knee forward behind your right wrist, with the shin angled across your body.",
+        "Slide your left leg straight back.",
+        "Place a yoga block or cushion under your right hip so your hips stay level.",
+        "Stay upright or lower onto your forearms. Hold, then switch sides."
+      ],
+      "safety": [
+        "Bring the front heel closer to your body if your knee complains.",
+        "Use more support under the hip rather than forcing it down.",
+        "Skip if you have a knee injury – use the lying figure-four instead."
+      ]
+    },
+
+    {
+      "id": "front-thigh-standing-quad",
+      "name": "Standing quad stretch",
+      "bodyPart": "front-thigh",
+      "type": "solo",
+      "summary": "Hold your foot behind you to stretch the front of the thigh.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Stand tall next to a wall or chair for balance.",
+        "Bend your right knee and hold your right ankle behind you.",
+        "Keep your knees close together and tuck your tailbone slightly.",
+        "Hold, then switch legs."
+      ],
+      "safety": [
+        "Hold the ankle, not the toes, to protect the knee.",
+        "Don't let your back arch or the knee drift out to the side."
+      ]
+    },
+    {
+      "id": "front-thigh-side-lying-quad",
+      "name": "Side-lying quad stretch",
+      "bodyPart": "front-thigh",
+      "type": "solo",
+      "summary": "Lying on your side makes this easier on balance.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Lie on your left side with your head resting on your left arm.",
+        "Bend your right knee and hold your right ankle with your right hand.",
+        "Gently draw the heel toward your buttock, keeping your knees together.",
+        "Hold, then roll over and switch sides."
+      ],
+      "safety": [
+        "If you can't reach your ankle, loop a towel around it.",
+        "Keep the stretch gentle – no pain in the knee."
+      ]
+    },
+    {
+      "id": "front-thigh-partner-prone",
+      "name": "Partner lying quad stretch",
+      "bodyPart": "front-thigh",
+      "type": "partner",
+      "summary": "Lie face-down while your partner slowly bends your knee.",
+      "holdSeconds": 20,
+      "perSide": true,
+      "steps": [
+        "Lie face-down with your legs straight and forehead resting on your hands.",
+        "Your partner kneels beside you and holds your right ankle.",
+        "Your partner slowly bends your knee, bringing your heel toward your buttock until you say 'there'.",
+        "Hold, then your partner lowers the leg slowly. Switch sides."
+      ],
+      "safety": [
+        "Partner moves slowly and stops as soon as you speak up.",
+        "Keep your hips pressed into the floor.",
+        "Avoid with a knee injury."
+      ]
+    },
+    {
+      "id": "front-thigh-strap-quad",
+      "name": "Strap quad stretch",
+      "bodyPart": "front-thigh",
+      "type": "equipment",
+      "summary": "Use a strap to reach your foot while lying face-down.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "equipment": ["Strap, belt or towel"],
+      "steps": [
+        "Lie face-down and loop a strap around your right ankle.",
+        "Hold the strap over your right shoulder with both hands.",
+        "Gently pull the strap to draw your heel toward your buttock.",
+        "Hold, then release and switch sides."
+      ],
+      "safety": [
+        "Pull smoothly – no jerking.",
+        "Keep your hips on the floor and your lower back relaxed."
+      ]
+    },
+
+    {
+      "id": "back-thigh-seated-single-leg",
+      "name": "Seated hamstring stretch",
+      "bodyPart": "back-thigh",
+      "type": "solo",
+      "summary": "Reach toward one outstretched leg while seated.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Sit on the floor with your right leg straight and the sole of your left foot against your right inner thigh.",
+        "Sit tall, then hinge forward from your hips over the straight leg.",
+        "Reach toward your shin, ankle or foot – wherever you feel a stretch.",
+        "Hold, then switch legs."
+      ],
+      "safety": [
+        "Lead with your chest, not your head, to avoid rounding your back.",
+        "A slight bend in the straight knee is fine."
+      ]
+    },
+    {
+      "id": "back-thigh-standing-heel",
+      "name": "Standing hamstring stretch",
+      "bodyPart": "back-thigh",
+      "type": "solo",
+      "summary": "Put one heel forward and hinge at the hips.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Stand tall and step your right foot forward, heel on the floor and toes up.",
+        "Bend your left knee slightly and rest your hands on your left thigh.",
+        "Keeping your back straight, hinge forward from your hips until you feel the back of the right thigh.",
+        "Hold, then switch legs."
+      ],
+      "safety": [
+        "Keep your back flat – don't round to reach further.",
+        "Hold on to a wall or chair if your balance is unsure."
+      ]
+    },
+    {
+      "id": "back-thigh-partner-lying",
+      "name": "Partner lying hamstring stretch",
+      "bodyPart": "back-thigh",
+      "type": "partner",
+      "summary": "Partner gently raises your straight leg while you lie on your back.",
+      "holdSeconds": 20,
+      "perSide": true,
+      "steps": [
+        "Lie on your back with both legs straight.",
+        "Your partner kneels beside you, holding your right heel and resting a hand above your knee.",
+        "Your partner slowly raises your straight leg until you feel a stretch, and you say 'stop'.",
+        "Hold, then your partner lowers the leg slowly. Switch sides."
+      ],
+      "safety": [
+        "Keep the other leg flat on the floor – your partner can steady it with their knee.",
+        "Partner never bounces or pushes past your 'stop'.",
+        "Stop immediately if you feel pain behind the knee or down the leg."
+      ]
+    },
+    {
+      "id": "back-thigh-strap-lying",
+      "name": "Strap lying hamstring stretch",
+      "bodyPart": "back-thigh",
+      "type": "equipment",
+      "summary": "Loop a strap around your foot and raise your straight leg.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "equipment": ["Strap, belt or towel"],
+      "steps": [
+        "Lie on your back with a strap looped around the ball of your right foot.",
+        "Hold the strap with both hands and straighten your right leg toward the ceiling.",
+        "Gently pull until you feel a stretch along the back of the thigh.",
+        "Hold, then lower and switch legs."
+      ],
+      "safety": [
+        "Keep your head and shoulders relaxed on the floor.",
+        "Bend the other knee with the foot flat if your lower back feels strained."
+      ]
+    },
+
+    {
+      "id": "calves-wall-straight",
+      "name": "Wall calf stretch",
+      "bodyPart": "calves",
+      "type": "solo",
+      "summary": "Lean into a wall with the back leg straight.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Stand facing a wall with your hands on it at shoulder height.",
+        "Step your right foot back, keeping the leg straight and the heel down.",
+        "Bend your front knee and lean into the wall until you feel the upper calf.",
+        "Hold, then switch legs."
+      ],
+      "safety": [
+        "Point your back toes straight forward.",
+        "Keep the back heel on the floor."
+      ]
+    },
+    {
+      "id": "calves-wall-bent-knee",
+      "name": "Bent-knee calf stretch",
+      "bodyPart": "calves",
+      "type": "solo",
+      "summary": "Bend the back knee to target the lower calf.",
+      "holdSeconds": 30,
+      "perSide": true,
+      "steps": [
+        "Stand facing a wall with your hands on it.",
+        "Step your right foot back a short distance.",
+        "Bend both knees, keeping the right heel on the floor.",
+        "Hold when you feel a stretch low in the calf, then switch legs."
+      ],
+      "safety": [
+        "Keep the movement slow and controlled.",
+        "Ease off if you feel pain in the Achilles tendon."
+      ]
+    },
+    {
+      "id": "calves-partner-seated",
+      "name": "Partner seated calf stretch",
+      "bodyPart": "calves",
+      "type": "partner",
+      "summary": "Partner gently presses the ball of your foot toward your shin.",
+      "holdSeconds": 20,
+      "perSide": true,
+      "steps": [
+        "Sit on the floor with your legs straight.",
+        "Your partner kneels at your feet and cups your right heel with one hand.",
+        "With the other hand on the ball of your foot, your partner gently presses your toes toward you.",
+        "Hold, then release and switch legs."
+      ],
+      "safety": [
+        "Partner presses on the ball of the foot, not the toes.",
+        "Use slow, steady pressure – never bounce."
+      ]
+    },
+    {
+      "id": "calves-step-drop",
+      "name": "Step heel drop",
+      "bodyPart": "calves",
+      "type": "equipment",
+      "summary": "Let your heels sink below a step to stretch the calves.",
+      "holdSeconds": 30,
+      "perSide": false,
+      "equipment": ["Step or stair"],
+      "steps": [
+        "Stand on the edge of a step with the balls of your feet on it and your heels hanging off.",
+        "Hold a railing or wall for balance.",
+        "Slowly lower your heels below the step until you feel the stretch.",
+        "Hold, then rise back up to level."
+      ],
+      "safety": [
+        "Always hold on to something stable.",
+        "Lower slowly – don't drop or bounce.",
+        "Use the bottom step so a slip is harmless."
+      ]
+    }
+  ]
+}

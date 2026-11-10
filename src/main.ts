@@ -1,1 +1,1 @@
-document.querySelector<HTMLDivElement>('#app')!.textContent = 'Stretching';
+import { stretches } from './data'; console.log(stretches.length);
