@@ -1,4 +1,5 @@
-import { bodyParts, getBodyPart, getStretch, stretchesFor } from './data';
+import { bodyParts, getBodyPart, getStretch, muscleName, stretchesFor } from './data';
+import { sceneFor } from './figure/scenes';
 import { favouriteIds, isFavourite } from './favourites';
 import { getLang, loc, t } from './i18n';
 import { RING_LENGTH } from './timer';
@@ -123,6 +124,30 @@ export function stretchView(id: string): View | null {
         .join('')}</ul></section>`
     : '';
 
+  const tags = (ids: string[] | undefined, cls: string) =>
+    (ids ?? [])
+      .map((id) => muscleName(id))
+      .filter((m) => !!m)
+      .map((m) => `<li class="muscle ${cls}">${esc(loc(m!))}</li>`)
+      .join('');
+  const primary = tags(s.muscles?.primary, 'muscle-primary');
+  const secondary = tags(s.muscles?.secondary, 'muscle-secondary');
+  const muscles =
+    (primary ? `<div class="muscle-row"><span class="muscle-label">${t('primaryMuscles')}</span><ul class="muscle-list">${primary}</ul></div>` : '') +
+    (secondary ? `<div class="muscle-row"><span class="muscle-label">${t('secondaryMuscles')}</span><ul class="muscle-list">${secondary}</ul></div>` : '');
+  const video = `https://www.youtube.com/results?search_query=${encodeURIComponent(s.name.en)}`;
+  const demo = `
+      <section class="demo-card">
+        ${sceneFor(s.id) ? `<div class="demo" data-demo="${esc(s.id)}"></div>
+        <p class="demo-legend"><span class="demo-swatch" aria-hidden="true"></span>${t('demoLegend')}</p>
+        <p class="demo-reduced">${t('demoReduced')}</p>` : ''}
+        ${muscles}
+        <a class="btn-video" href="${video}" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13l11-6.5z"/></svg>
+          <span>${t('demoVideo')}</span><span class="btn-video-hint">${t('demoVideoHint')}</span>
+        </a>
+      </section>`;
+
   return {
     title: loc(s.name),
     parent: `#/part/${part.id}`,
@@ -137,6 +162,7 @@ export function stretchView(id: string): View | null {
         ${favButton(s, 'fav-btn-lg')}
       </div>
       <p class="lead">${esc(loc(s.summary))}</p>
+      ${demo}
 
       <section class="timer" data-timer data-kind="idle">
         <div class="timer-dial">

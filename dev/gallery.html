@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Figure gallery (dev)</title>
+    <style>
+      body { margin: 0; padding: 12px; font: 13px system-ui; background: var(--bg); color: var(--text); }
+      .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .cell { background: var(--demo-bg); border: 1px solid var(--border); border-radius: 8px; padding: 4px; }
+      .cell b { display: block; padding: 2px 4px; }
+      .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    </style>
+  </head>
+  <body>
+    <!-- Dev tool: npm run dev, then open /stretching/dev/gallery.html (?id=<stretch id> for one, ?live for animation). -->
+    <div class="grid" id="g"></div>
+    <script type="module" src="./gallery.ts"></script>
+  </body>
+</html>

@@ -38,6 +38,8 @@ export interface Stretch {
   holdSeconds: number;
   /** True if the stretch is done on one side, then repeated on the other. */
   perSide: boolean;
+  /** Muscle ids (keys of "muscles" at the top of stretches.json). */
+  muscles?: { primary: string[]; secondary: string[] };
   /** Items needed (only for type "equipment"). */
   equipment?: Localized[];
   steps: Localized[];
@@ -45,6 +47,8 @@ export interface Stretch {
 }
 
 export interface StretchData {
+  /** Muscle names by id, shown as "primary" / "secondary" tags. */
+  muscles: Record<string, Localized>;
   bodyParts: BodyPart[];
   stretches: Stretch[];
 }
