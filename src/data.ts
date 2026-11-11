@@ -27,6 +27,16 @@ function validate(data: StretchData): StretchData {
     if (!allLocalized(s.steps) || s.steps.length === 0) problems.push('needs at least one step, each { "en", "zh" }');
     if (!allLocalized(s.safety)) problems.push('safety must be a list of { "en", "zh" }');
     if (s.equipment && !allLocalized(s.equipment)) problems.push('equipment must be a list of { "en", "zh" }');
+    if (s.muscles) {
+      const unknown = [...(s.muscles.primary ?? []), ...(s.muscles.secondary ?? [])].filter((m) => !data.muscles?.[m]);
+      if (unknown.length) {
+        console.warn(`[stretches.json] "${s.id}": unknown muscle id(s) ${unknown.join(', ')} – add them to "muscles"`);
+        s.muscles = {
+          primary: (s.muscles.primary ?? []).filter((m) => data.muscles?.[m]),
+          secondary: (s.muscles.secondary ?? []).filter((m) => data.muscles?.[m]),
+        };
+      }
+    }
     if (problems.length) {
       console.warn(`[stretches.json] Skipping "${s.id || s.name?.en}": ${problems.join(', ')}`);
       return false;
@@ -34,13 +44,15 @@ function validate(data: StretchData): StretchData {
     seen.add(s.id);
     return true;
   });
-  return { bodyParts: data.bodyParts, stretches: valid };
+  return { muscles: data.muscles ?? {}, bodyParts: data.bodyParts, stretches: valid };
 }
 
 const data = validate(raw as StretchData);
 
 export const bodyParts: BodyPart[] = data.bodyParts;
 export const stretches: Stretch[] = data.stretches;
+
+export const muscleName = (id: string): Localized | undefined => data.muscles[id];
 
 export const getBodyPart = (id: string): BodyPart | undefined =>
   bodyParts.find((p) => p.id === id);

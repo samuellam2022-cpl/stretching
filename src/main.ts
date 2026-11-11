@@ -1,8 +1,10 @@
 import './style.css';
 import { getStretch } from './data';
 import { toggleFavourite } from './favourites';
-import { applyDocumentLang, getLang, setLang, t, type Lang } from './i18n';
+import { applyDocumentLang, getLang, loc, setLang, t, type Lang } from './i18n';
 import { resetTimerUI, startTimer, stopTimer } from './timer';
+import { mountDemo } from './figure/player';
+import { sceneFor } from './figure/scenes';
 import {
   FILTERS,
   favouritesView,
@@ -84,8 +86,12 @@ function resolve(hash: string): View {
 /** Route key without the filter, so changing filter keeps scroll position sensible. */
 const routeKey = (hash: string) => hash.split('/').slice(0, 3).join('/') || '#/';
 
+let stopDemo: (() => void) | null = null;
+
 function render(): void {
   stopTimer();
+  stopDemo?.();
+  stopDemo = null;
   if (currentRoute) scrollPositions.set(routeKey(currentRoute), window.scrollY);
 
   const hash = location.hash || '#/';
@@ -98,6 +104,10 @@ function render(): void {
   document.title = current.title === appName ? appName : `${current.title} · ${appName}`;
   backBtn.hidden = !current.parent;
   contentEl.innerHTML = current.html;
+  const demoEl = contentEl.querySelector<HTMLElement>('[data-demo]');
+  const scene = demoEl && sceneFor(demoEl.dataset.demo!);
+  const st = demoEl && getStretch(demoEl.dataset.demo!);
+  if (demoEl && scene && st) stopDemo = mountDemo(demoEl, scene, t('demoLabel', { name: loc(st.name) }));
   app.querySelectorAll<HTMLElement>('[data-tab]').forEach((t) => {
     const active = t.dataset.tab === current!.tab;
     t.classList.toggle('active', active);

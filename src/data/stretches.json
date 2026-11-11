@@ -1,4 +1,36 @@
 {
+  "muscles": {
+    "upper-trapezius": { "en": "Upper trapezius", "zh": "上斜方肌" },
+    "scalenes": { "en": "Scalenes", "zh": "斜角肌" },
+    "levator-scapulae": { "en": "Levator scapulae", "zh": "提肩胛肌" },
+    "sternocleidomastoid": { "en": "Sternocleidomastoid", "zh": "胸鎖乳突肌" },
+    "suboccipitals": { "en": "Suboccipitals", "zh": "枕下肌群" },
+    "posterior-deltoid": { "en": "Rear deltoid", "zh": "後三角肌" },
+    "anterior-deltoid": { "en": "Front deltoid", "zh": "前三角肌" },
+    "rhomboids": { "en": "Rhomboids", "zh": "菱形肌" },
+    "rotator-cuff": { "en": "Rotator cuff", "zh": "旋轉肌袖" },
+    "pectoralis-major": { "en": "Pectoralis major", "zh": "胸大肌" },
+    "pectoralis-minor": { "en": "Pectoralis minor", "zh": "胸小肌" },
+    "biceps": { "en": "Biceps", "zh": "二頭肌" },
+    "triceps": { "en": "Triceps", "zh": "三頭肌" },
+    "latissimus-dorsi": { "en": "Latissimus dorsi", "zh": "背闊肌" },
+    "erector-spinae": { "en": "Erector spinae", "zh": "豎脊肌" },
+    "abdominals": { "en": "Abdominals", "zh": "腹肌" },
+    "obliques": { "en": "Obliques", "zh": "腹斜肌" },
+    "quadratus-lumborum": { "en": "Quadratus lumborum", "zh": "腰方肌" },
+    "gluteus-maximus": { "en": "Gluteus maximus", "zh": "臀大肌" },
+    "gluteus-medius": { "en": "Gluteus medius", "zh": "臀中肌" },
+    "piriformis": { "en": "Piriformis", "zh": "梨狀肌" },
+    "iliopsoas": { "en": "Hip flexors (iliopsoas)", "zh": "髖屈肌（髂腰肌）" },
+    "rectus-femoris": { "en": "Rectus femoris", "zh": "股直肌" },
+    "quadriceps": { "en": "Quadriceps", "zh": "股四頭肌" },
+    "adductors": { "en": "Adductors (inner thigh)", "zh": "內收肌（大腿內側）" },
+    "gracilis": { "en": "Gracilis", "zh": "股薄肌" },
+    "hamstrings": { "en": "Hamstrings", "zh": "膕繩肌" },
+    "gastrocnemius": { "en": "Gastrocnemius", "zh": "腓腸肌" },
+    "soleus": { "en": "Soleus", "zh": "比目魚肌" },
+    "achilles-tendon": { "en": "Achilles tendon", "zh": "跟腱" }
+  },
   "bodyParts": [
     {
       "id": "neck",
@@ -58,6 +90,10 @@
       "perSide": true,
       "name": { "en": "Neck side bend", "zh": "頸部側彎" },
       "summary": { "en": "Gently tilt your ear toward your shoulder.", "zh": "慢慢將耳仔向膊頭方向側。" },
+      "muscles": {
+        "primary": ["upper-trapezius", "scalenes"],
+        "secondary": ["levator-scapulae", "sternocleidomastoid"]
+      },
       "steps": [
         { "en": "Sit or stand tall with your shoulders relaxed and down.", "zh": "坐直或企直，膊頭放鬆向下沉。" },
         { "en": "Slowly tilt your right ear toward your right shoulder.", "zh": "慢慢將右耳向右膊頭側落去。" },
@@ -78,6 +114,10 @@
       "perSide": true,
       "name": { "en": "Look-down neck stretch", "zh": "低頭頸部伸展" },
       "summary": { "en": "Turn your nose toward your armpit to stretch the back of the neck.", "zh": "將鼻尖轉向腋下，伸展頸後。" },
+      "muscles": {
+        "primary": ["levator-scapulae"],
+        "secondary": ["upper-trapezius"]
+      },
       "steps": [
         { "en": "Sit tall and turn your head about 45° to the right.", "zh": "坐直，將頭轉向右邊大約 45°。" },
         { "en": "Drop your chin, as if looking toward your right armpit.", "zh": "收下巴，好似望向右邊腋下咁。" },
@@ -97,6 +137,10 @@
       "perSide": true,
       "name": { "en": "Partner-assisted neck stretch", "zh": "雙人頸部伸展" },
       "summary": { "en": "Partner steadies your shoulder while you tilt your head away.", "zh": "拍檔穩住你膊頭，你將頭側向另一邊。" },
+      "muscles": {
+        "primary": ["upper-trapezius", "scalenes"],
+        "secondary": ["levator-scapulae"]
+      },
       "steps": [
         { "en": "Sit on a chair; your partner stands behind you.", "zh": "坐喺櫈上，拍檔企喺你後面。" },
         { "en": "Your partner rests one hand lightly on top of your left shoulder to keep it down.", "zh": "拍檔將一隻手輕輕放喺你左膊頭上面，令佢保持向下。" },
@@ -117,6 +161,10 @@
       "perSide": false,
       "name": { "en": "Towel chin tuck", "zh": "毛巾收下巴" },
       "summary": { "en": "Use a towel behind the neck to guide a gentle chin tuck.", "zh": "用毛巾承托頸後，輕輕做收下巴。" },
+      "muscles": {
+        "primary": ["suboccipitals"],
+        "secondary": ["upper-trapezius"]
+      },
       "equipment": [
         { "en": "Small towel", "zh": "細毛巾" }
       ],
@@ -139,6 +187,10 @@
       "perSide": true,
       "name": { "en": "Cross-body shoulder stretch", "zh": "手臂橫拉伸展" },
       "summary": { "en": "Draw one arm across your chest to stretch the back of the shoulder.", "zh": "將一隻手橫過胸前，伸展膊頭後面。" },
+      "muscles": {
+        "primary": ["posterior-deltoid"],
+        "secondary": ["rhomboids", "rotator-cuff"]
+      },
       "steps": [
         { "en": "Stand or sit tall.", "zh": "企直或坐直。" },
         { "en": "Bring your right arm straight across your chest at shoulder height.", "zh": "將右手伸直，喺膊頭高度橫過胸前。" },
@@ -158,6 +210,10 @@
       "perSide": true,
       "name": { "en": "Wall chest stretch", "zh": "靠牆胸肌伸展" },
       "summary": { "en": "Open the front of the shoulder and chest against a wall.", "zh": "靠住牆打開膊頭前面同胸口。" },
+      "muscles": {
+        "primary": ["pectoralis-major"],
+        "secondary": ["anterior-deltoid", "biceps"]
+      },
       "steps": [
         { "en": "Stand side-on to a wall and place your right palm on it at shoulder height, arm straight behind you.", "zh": "側身企喺牆邊，右手掌喺膊頭高度按住牆，手臂伸直喺身後。" },
         { "en": "Slowly turn your feet and body away from the wall until you feel a stretch across the chest and front of the shoulder.", "zh": "慢慢將腳同身體轉離牆，直到胸口同膊頭前面有拉緊感。" },
@@ -177,6 +233,10 @@
       "perSide": false,
       "name": { "en": "Partner chest opener", "zh": "雙人開胸伸展" },
       "summary": { "en": "Partner gently draws your arms back to open the chest.", "zh": "拍檔輕輕將你手臂向後拉，打開胸口。" },
+      "muscles": {
+        "primary": ["pectoralis-major", "pectoralis-minor"],
+        "secondary": ["anterior-deltoid"]
+      },
       "steps": [
         { "en": "Sit tall on the floor or a stool with your hands clasped behind your head.", "zh": "坐直喺地下或者凳上，雙手交叉放喺後腦。" },
         { "en": "Your partner stands behind you and holds your elbows.", "zh": "拍檔企喺你後面，揸住你兩個手踭。" },
@@ -197,6 +257,10 @@
       "perSide": true,
       "name": { "en": "Towel overhead stretch", "zh": "毛巾過頭伸展" },
       "summary": { "en": "Hold a towel behind your back to stretch shoulders and triceps.", "zh": "喺背後揸住毛巾，伸展膊頭同手臂後側。" },
+      "muscles": {
+        "primary": ["triceps"],
+        "secondary": ["latissimus-dorsi", "rotator-cuff"]
+      },
       "equipment": [
         { "en": "Towel or strap", "zh": "毛巾或伸展帶" }
       ],
@@ -219,6 +283,10 @@
       "perSide": false,
       "name": { "en": "Cat–cow", "zh": "貓牛式" },
       "summary": { "en": "Flow between rounding and arching your spine on hands and knees.", "zh": "四點跪姿，喺拱背同塌腰之間慢慢郁動。" },
+      "muscles": {
+        "primary": ["erector-spinae"],
+        "secondary": ["abdominals", "rhomboids"]
+      },
       "steps": [
         { "en": "Start on hands and knees, hands under shoulders and knees under hips.", "zh": "四點跪喺地上，手喺膊頭正下面，膝頭喺髖部正下面。" },
         { "en": "Breathe in: let your belly lower and lift your chest and tailbone (cow).", "zh": "吸氣：個肚向下沉，胸口同尾龍骨向上提（牛式）。" },
@@ -238,6 +306,10 @@
       "perSide": false,
       "name": { "en": "Child's pose", "zh": "嬰兒式" },
       "summary": { "en": "Sit back onto your heels and reach forward to lengthen the back.", "zh": "坐返落腳跟，雙手向前伸，拉長背部。" },
+      "muscles": {
+        "primary": ["erector-spinae", "latissimus-dorsi"],
+        "secondary": ["gluteus-maximus"]
+      },
       "steps": [
         { "en": "Kneel on the floor with your big toes together and knees apart.", "zh": "跪喺地上，兩隻大腳趾貼埋，膝頭打開。" },
         { "en": "Sit your hips back toward your heels.", "zh": "將臀部向後坐向腳跟。" },
@@ -257,6 +329,10 @@
       "perSide": false,
       "name": { "en": "Partner back pull", "zh": "雙人背部拉伸" },
       "summary": { "en": "Hold hands and lean back away from each other to stretch the upper back.", "zh": "互相拉住手向後坐，伸展上背。" },
+      "muscles": {
+        "primary": ["latissimus-dorsi", "rhomboids"],
+        "secondary": ["erector-spinae"]
+      },
       "steps": [
         { "en": "Stand facing your partner, about an arm's length apart, feet hip-width.", "zh": "同拍檔面對面企，相距大約一隻手臂，雙腳與髖同寬。" },
         { "en": "Hold each other's wrists firmly.", "zh": "互相緊握對方手腕。" },
@@ -277,6 +353,10 @@
       "perSide": false,
       "name": { "en": "Foam roller upper-back extension", "zh": "按摩滾筒上背伸展" },
       "summary": { "en": "Lean back over a foam roller to open the upper back.", "zh": "向後挨喺按摩滾筒上，打開上背。" },
+      "muscles": {
+        "primary": ["pectoralis-major", "abdominals"],
+        "secondary": ["latissimus-dorsi"]
+      },
       "equipment": [
         { "en": "Foam roller", "zh": "按摩滾筒" }
       ],
@@ -299,6 +379,10 @@
       "perSide": true,
       "name": { "en": "Knee-to-chest", "zh": "抱膝伸展" },
       "summary": { "en": "Hug one knee in while lying on your back.", "zh": "瞓喺地上，將一邊膝頭抱向胸口。" },
+      "muscles": {
+        "primary": ["erector-spinae", "gluteus-maximus"],
+        "secondary": ["hamstrings"]
+      },
       "steps": [
         { "en": "Lie on your back with both knees bent and feet flat.", "zh": "仰臥，兩邊膝頭屈曲，腳掌貼地。" },
         { "en": "Bring your right knee toward your chest, holding behind the thigh or on the shin.", "zh": "將右膝拉向胸口，雙手揸住大腿後面或者小腿。" },
@@ -318,6 +402,10 @@
       "perSide": true,
       "name": { "en": "Lying spinal twist", "zh": "仰臥扭轉" },
       "summary": { "en": "Let your knees drop to one side while your shoulders stay down.", "zh": "膝頭倒向一邊，膊頭保持貼地。" },
+      "muscles": {
+        "primary": ["obliques", "quadratus-lumborum"],
+        "secondary": ["gluteus-medius", "pectoralis-major"]
+      },
       "steps": [
         { "en": "Lie on your back with knees bent and feet flat, arms out wide in a T.", "zh": "仰臥，膝頭屈曲、腳掌貼地，雙手向兩邊打開成 T 字。" },
         { "en": "Keeping your knees together, slowly lower them to the right.", "zh": "兩邊膝頭貼埋，慢慢倒向右邊。" },
@@ -338,6 +426,10 @@
       "perSide": false,
       "name": { "en": "Partner-assisted knee hug", "zh": "雙人輔助抱膝" },
       "summary": { "en": "Partner gently supports both knees toward your chest.", "zh": "拍檔輕輕幫你將兩邊膝頭推向胸口。" },
+      "muscles": {
+        "primary": ["erector-spinae", "gluteus-maximus"],
+        "secondary": ["quadratus-lumborum"]
+      },
       "steps": [
         { "en": "Lie on your back and draw both knees toward your chest.", "zh": "仰臥，將兩邊膝頭拉向胸口。" },
         { "en": "Your partner kneels at your feet and places their hands on your shins.", "zh": "拍檔跪喺你腳邊，雙手放喺你小腿上。" },
@@ -358,6 +450,10 @@
       "perSide": false,
       "name": { "en": "Exercise ball back drape", "zh": "健身球伏背伸展" },
       "summary": { "en": "Lie face-down over an exercise ball to round and relax the back.", "zh": "伏喺健身球上，令背部拱起放鬆。" },
+      "muscles": {
+        "primary": ["erector-spinae"],
+        "secondary": ["quadratus-lumborum", "latissimus-dorsi"]
+      },
       "equipment": [
         { "en": "Exercise ball", "zh": "健身球" }
       ],
@@ -380,6 +476,10 @@
       "perSide": true,
       "name": { "en": "Lying figure-four", "zh": "仰臥「4」字伸展" },
       "summary": { "en": "Cross one ankle over the opposite knee to stretch the glute.", "zh": "將一邊腳眼放喺另一邊膝頭上，伸展臀部。" },
+      "muscles": {
+        "primary": ["piriformis", "gluteus-maximus"],
+        "secondary": ["gluteus-medius"]
+      },
       "steps": [
         { "en": "Lie on your back with both knees bent and feet flat.", "zh": "仰臥，兩邊膝頭屈曲、腳掌貼地。" },
         { "en": "Cross your right ankle over your left knee, letting the right knee open out.", "zh": "將右腳眼放喺左膝上面，右膝向外打開。" },
@@ -399,6 +499,10 @@
       "perSide": true,
       "name": { "en": "Kneeling hip flexor stretch", "zh": "跪姿髖屈肌伸展" },
       "summary": { "en": "A half-kneeling lunge to stretch the front of the hip.", "zh": "單膝跪地弓步，伸展髖部前面。" },
+      "muscles": {
+        "primary": ["iliopsoas", "rectus-femoris"],
+        "secondary": ["adductors"]
+      },
       "steps": [
         { "en": "Kneel on your right knee with your left foot flat in front, both knees at about 90°.", "zh": "右膝跪地，左腳掌喺前面踩實，兩邊膝頭大約成 90°。" },
         { "en": "Tuck your tailbone under slightly and squeeze your right glute.", "zh": "尾龍骨微微向下收，夾緊右邊臀部。" },
@@ -418,6 +522,10 @@
       "perSide": false,
       "name": { "en": "Partner butterfly stretch", "zh": "雙人蝴蝶式" },
       "summary": { "en": "Partner gently presses your knees outward in a butterfly sit.", "zh": "拍檔喺蝴蝶坐姿輕輕將你膝頭向外壓。" },
+      "muscles": {
+        "primary": ["adductors"],
+        "secondary": ["gracilis"]
+      },
       "steps": [
         { "en": "Sit tall with the soles of your feet together and knees falling out to the sides.", "zh": "坐直，兩隻腳掌底貼埋，膝頭向兩邊打開。" },
         { "en": "Your partner kneels in front of you and places their hands on your inner knees.", "zh": "拍檔跪喺你前面，雙手放喺你膝頭內側。" },
@@ -438,6 +546,10 @@
       "perSide": true,
       "name": { "en": "Supported pigeon pose", "zh": "承托鴿子式" },
       "summary": { "en": "Pigeon pose with a block or cushion under the hip for support.", "zh": "鴿子式，喺髖部下面墊瑜伽磚或者咕臣承托。" },
+      "muscles": {
+        "primary": ["piriformis", "gluteus-maximus"],
+        "secondary": ["iliopsoas"]
+      },
       "equipment": [
         { "en": "Yoga block or firm cushion", "zh": "瑜伽磚或硬身咕臣" }
       ],
@@ -461,6 +573,10 @@
       "perSide": true,
       "name": { "en": "Standing quad stretch", "zh": "企立大腿前側伸展" },
       "summary": { "en": "Hold your foot behind you to stretch the front of the thigh.", "zh": "喺身後揸住隻腳，伸展大腿前面。" },
+      "muscles": {
+        "primary": ["quadriceps"],
+        "secondary": ["iliopsoas"]
+      },
       "steps": [
         { "en": "Stand tall next to a wall or chair for balance.", "zh": "企直，扶住牆或者櫈保持平衡。" },
         { "en": "Bend your right knee and hold your right ankle behind you.", "zh": "屈右膝，喺身後揸住右腳眼。" },
@@ -480,6 +596,10 @@
       "perSide": true,
       "name": { "en": "Side-lying quad stretch", "zh": "側臥大腿前側伸展" },
       "summary": { "en": "Lying on your side makes this easier on balance.", "zh": "側瞓做，唔使擔心平衡。" },
+      "muscles": {
+        "primary": ["quadriceps"],
+        "secondary": ["iliopsoas"]
+      },
       "steps": [
         { "en": "Lie on your left side with your head resting on your left arm.", "zh": "向左側瞓，個頭枕喺左手上。" },
         { "en": "Bend your right knee and hold your right ankle with your right hand.", "zh": "屈右膝，用右手揸住右腳眼。" },
@@ -499,6 +619,10 @@
       "perSide": true,
       "name": { "en": "Partner lying quad stretch", "zh": "雙人俯臥大腿前側伸展" },
       "summary": { "en": "Lie face-down while your partner slowly bends your knee.", "zh": "你俯臥，拍檔慢慢幫你屈膝。" },
+      "muscles": {
+        "primary": ["quadriceps"],
+        "secondary": ["iliopsoas"]
+      },
       "steps": [
         { "en": "Lie face-down with your legs straight and forehead resting on your hands.", "zh": "俯臥，雙腳伸直，額頭枕喺手背上。" },
         { "en": "Your partner kneels beside you and holds your right ankle.", "zh": "拍檔跪喺你旁邊，揸住你右腳眼。" },
@@ -519,6 +643,10 @@
       "perSide": true,
       "name": { "en": "Strap quad stretch", "zh": "伸展帶大腿前側伸展" },
       "summary": { "en": "Use a strap to reach your foot while lying face-down.", "zh": "俯臥時用伸展帶拉到隻腳。" },
+      "muscles": {
+        "primary": ["quadriceps"],
+        "secondary": ["iliopsoas"]
+      },
       "equipment": [
         { "en": "Strap, belt or towel", "zh": "伸展帶、皮帶或毛巾" }
       ],
@@ -541,6 +669,10 @@
       "perSide": true,
       "name": { "en": "Seated hamstring stretch", "zh": "坐姿大腿後側伸展" },
       "summary": { "en": "Reach toward one outstretched leg while seated.", "zh": "坐喺地上，向伸直嘅一隻腳伸手。" },
+      "muscles": {
+        "primary": ["hamstrings"],
+        "secondary": ["gastrocnemius", "erector-spinae"]
+      },
       "steps": [
         { "en": "Sit on the floor with your right leg straight and the sole of your left foot against your right inner thigh.", "zh": "坐喺地上，右腳伸直，左腳掌貼住右大腿內側。" },
         { "en": "Sit tall, then hinge forward from your hips over the straight leg.", "zh": "坐直，然後由髖部向前摺，俯向伸直嗰隻腳。" },
@@ -560,6 +692,10 @@
       "perSide": true,
       "name": { "en": "Standing hamstring stretch", "zh": "企立大腿後側伸展" },
       "summary": { "en": "Put one heel forward and hinge at the hips.", "zh": "一隻腳跟放前，由髖部向前摺。" },
+      "muscles": {
+        "primary": ["hamstrings"],
+        "secondary": ["gastrocnemius"]
+      },
       "steps": [
         { "en": "Stand tall and step your right foot forward, heel on the floor and toes up.", "zh": "企直，右腳向前踏一步，腳跟貼地、腳趾向上。" },
         { "en": "Bend your left knee slightly and rest your hands on your left thigh.", "zh": "左膝微屈，雙手放喺左大腿上。" },
@@ -579,6 +715,10 @@
       "perSide": true,
       "name": { "en": "Partner lying hamstring stretch", "zh": "雙人仰臥大腿後側伸展" },
       "summary": { "en": "Partner gently raises your straight leg while you lie on your back.", "zh": "你仰臥，拍檔輕輕將你伸直嘅腳抬高。" },
+      "muscles": {
+        "primary": ["hamstrings"],
+        "secondary": ["gastrocnemius", "gluteus-maximus"]
+      },
       "steps": [
         { "en": "Lie on your back with both legs straight.", "zh": "仰臥，雙腳伸直。" },
         { "en": "Your partner kneels beside you, holding your right heel and resting a hand above your knee.", "zh": "拍檔跪喺你旁邊，一隻手揸住你右腳跟，另一隻手放喺膝頭上面。" },
@@ -599,6 +739,10 @@
       "perSide": true,
       "name": { "en": "Strap lying hamstring stretch", "zh": "伸展帶仰臥大腿後側伸展" },
       "summary": { "en": "Loop a strap around your foot and raise your straight leg.", "zh": "用伸展帶套住腳掌，將伸直嘅腳抬高。" },
+      "muscles": {
+        "primary": ["hamstrings"],
+        "secondary": ["gastrocnemius"]
+      },
       "equipment": [
         { "en": "Strap, belt or towel", "zh": "伸展帶、皮帶或毛巾" }
       ],
@@ -621,6 +765,10 @@
       "perSide": true,
       "name": { "en": "Wall calf stretch", "zh": "靠牆小腿伸展" },
       "summary": { "en": "Lean into a wall with the back leg straight.", "zh": "向牆挨，後腳伸直。" },
+      "muscles": {
+        "primary": ["gastrocnemius"],
+        "secondary": ["soleus", "achilles-tendon"]
+      },
       "steps": [
         { "en": "Stand facing a wall with your hands on it at shoulder height.", "zh": "面向牆企，雙手喺膊頭高度按住牆。" },
         { "en": "Step your right foot back, keeping the leg straight and the heel down.", "zh": "右腳向後踏，腳伸直、腳跟貼地。" },
@@ -640,6 +788,10 @@
       "perSide": true,
       "name": { "en": "Bent-knee calf stretch", "zh": "屈膝小腿伸展" },
       "summary": { "en": "Bend the back knee to target the lower calf.", "zh": "後膝屈曲，針對小腿下半部。" },
+      "muscles": {
+        "primary": ["soleus"],
+        "secondary": ["achilles-tendon"]
+      },
       "steps": [
         { "en": "Stand facing a wall with your hands on it.", "zh": "面向牆企，雙手按住牆。" },
         { "en": "Step your right foot back a short distance.", "zh": "右腳向後踏一小步。" },
@@ -659,6 +811,10 @@
       "perSide": true,
       "name": { "en": "Partner seated calf stretch", "zh": "雙人坐姿小腿伸展" },
       "summary": { "en": "Partner gently presses the ball of your foot toward your shin.", "zh": "拍檔輕輕將你前腳掌推向小腿方向。" },
+      "muscles": {
+        "primary": ["gastrocnemius"],
+        "secondary": ["soleus", "achilles-tendon"]
+      },
       "steps": [
         { "en": "Sit on the floor with your legs straight.", "zh": "坐喺地上，雙腳伸直。" },
         { "en": "Your partner kneels at your feet and cups your right heel with one hand.", "zh": "拍檔跪喺你腳邊，一隻手托住你右腳跟。" },
@@ -678,6 +834,10 @@
       "perSide": false,
       "name": { "en": "Step heel drop", "zh": "樓梯級腳跟下沉" },
       "summary": { "en": "Let your heels sink below a step to stretch the calves.", "zh": "腳跟沉落樓梯級以下，伸展小腿。" },
+      "muscles": {
+        "primary": ["gastrocnemius", "soleus"],
+        "secondary": ["achilles-tendon"]
+      },
       "equipment": [
         { "en": "Step or stair", "zh": "樓梯級" }
       ],
