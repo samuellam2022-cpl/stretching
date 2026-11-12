@@ -51,6 +51,8 @@ export interface Pose {
   legL?: LimbSpec;
   /** Foreshortening, e.g. { thighR: 0.4 } for a thigh pointing at the viewer. */
   scale?: Partial<Record<ScaleKey, number>>;
+  /** Front view only: "back" = seen from behind (hair covers the head, no face). */
+  facing?: 'front' | 'back';
   /** Draw the arms behind the torso/legs (e.g. hands behind the back). */
   armsBehind?: boolean;
   /** Front view: draw the left arm over the right one. */
@@ -74,9 +76,16 @@ export type PartName =
   | 'head'
   | 'torso'
   | 'glutes'
+  | 'gluteMed'
+  | 'piriformis'
   | `${'upperArm' | 'forearm' | 'thigh' | 'shin' | 'foot'}${'R' | 'L'}`;
 
+export type MuscleLevel = 'primary' | 'secondary';
+
 export interface Highlight {
+  /** Muscle id this overlay belongs to (used for labels) and whether it is a primary or secondary muscle. */
+  muscle?: string;
+  level?: MuscleLevel;
   part: PartName;
   /** 1 = front of the segment, −1 = back, 0 = centre. In front view: + is screen-right for vertical parts. */
   side?: number;
@@ -143,7 +152,11 @@ const f1 = (n: number) => Math.round(n * 10) / 10;
 
 // ---------- shapes ----------
 
+type Material = 'skin' | 'shirt' | 'pants' | 'shoe' | 'hair' | 'eye';
+
 interface Shape {
+  /** What the shape is made of – decides its colour. */
+  mat?: Material;
   d: string;
   /** For grounding: points with a radius that bound the shape. */
   bounds: { p: Pt; r: number }[];
@@ -199,6 +212,7 @@ function ellipse(c: Pt, along: Pt, rAlong: number, rAcross: number): Shape {
 }
 
 function shapeToSvg(s: Shape, cls: string): string {
+  if (!s.d) return '';
   if (s.d.startsWith('E')) {
     const [cx, cy, rx, ry, ang] = s.d.slice(1).split(',');
     return `<ellipse class="${cls}" cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" transform="rotate(${ang} ${cx} ${cy})"/>`;
@@ -323,13 +337,23 @@ function build(p: Resolved): Built {
     const r2 = isArm ? R.forearm : R.shin;
     const n1 = isArm ? `upperArm${side}` : `thigh${side}`;
     const n2 = isArm ? `forearm${side}` : `shin${side}`;
-    const shapes = [capsule(root, mid, r1[0], r1[1]), capsule(mid, end, r2[0], r2[1])];
+    const shapes: Shape[] = isArm
+      ? [
+          { ...capsule(root, mid, r1[0], r1[1]), mat: 'skin' },
+          { ...capsule(mid, end, r2[0], r2[1]), mat: 'skin' },
+          // short sleeve over the top of the upper arm
+          { ...capsule(root, lerpPt(root, mid, 0.58), r1[0] + 0.7, lerp(r1[0], r1[1], 0.58) + 0.7), mat: 'shirt' },
+        ]
+      : [
+          { ...capsule(root, mid, r1[0], r1[1]), mat: 'pants' },
+          { ...capsule(mid, end, r2[0], r2[1]), mat: 'pants' },
+        ];
     segs[n1 as PartName] = { a: root, b: mid, ra: r1[0], rb: r1[1], frontSign: 1 };
     segs[n2 as PartName] = { a: mid, b: end, ra: r2[0], rb: r2[1], frontSign: 1 };
     if (isArm) {
       const hd = dir(ea ?? la);
       const tip = add(end, hd, L.hand);
-      shapes.push(capsule(add(end, hd, 1.5), tip, R.hand[0], R.hand[1]));
+      shapes.push({ ...capsule(add(end, hd, 1.5), tip, R.hand[0], R.hand[1]), mat: 'skin' });
       joints[`elbow${side}`] = mid;
       joints[`wrist${side}`] = end;
       joints[`hand${side}`] = add(end, hd, L.hand * 0.6);
@@ -341,13 +365,13 @@ function build(p: Resolved): Built {
         const fd = dir(ea ?? la);
         heel = add(end, fd, 1);
         toe = add(end, fd, 7);
-        shapes.push(capsule(heel, toe, 4.3, 3.6));
+        shapes.push({ ...capsule(heel, toe, 4.3, 3.6), mat: 'shoe' });
       } else {
         const fd = dir(ea ?? la + 90);
         const sole = frontOf(fd, 1); // points "down" through the sole when foot is flat
         heel = add(add(end, fd, -2.5), sole, -1.2);
         toe = add(add(end, fd, L.foot), sole, -2.2);
-        shapes.push(capsule(heel, toe, R.foot[0], R.foot[1]));
+        shapes.push({ ...capsule(heel, toe, R.foot[0], R.foot[1]), mat: 'shoe' });
         segs[`foot${side}` as PartName] = { a: heel, b: toe, ra: R.foot[0], rb: R.foot[1], frontSign: 1 };
       }
       joints[`knee${side}`] = mid;
@@ -363,10 +387,30 @@ function build(p: Resolved): Built {
   limb('R', 'leg', p.legR);
   limb('L', 'leg', p.legL ?? p.legR);
 
+  torsoShape.mat = 'shirt';
   parts.torso = [torsoShape];
-  parts.neck = [capsule(neckStart, neckTop, R.neck[0], R.neck[1])];
-  const headShapes = [ellipse(headC, headDir, 11.2, 9.4)];
-  if (!front) headShapes.push(capsule(add(add(headC, headFront, 7.8), headDir, -3), add(add(headC, headFront, 9.9), headDir, -4.6), 1.7, 1.3));
+  parts.neck = [{ ...capsule(neckStart, neckTop, R.neck[0], R.neck[1]), mat: 'skin' }];
+  // Head: skin, then hair and eyes placed in the head's own frame (a = across/front, u = up).
+  const hp = (a: number, u: number): Pt => add(add(headC, headFront, a), headDir, u);
+  const poly = (pts: [number, number][], mat: Material): Shape => ({ d: smoothClosed(pts.map(([a, u]) => hp(a, u))), bounds: [], mat });
+  const dot = (a: number, u: number): Shape => ({ ...ellipse(hp(a, u), headDir, 1.25, 1.05), mat: 'eye', bounds: [] });
+  const headShapes: Shape[] = [{ ...ellipse(headC, headDir, 11.2, 9.4), mat: 'skin' }];
+  if (!front) {
+    headShapes.push({ ...capsule(hp(7.8, -3), hp(9.9, -4.6), 1.7, 1.3), mat: 'skin' }); // nose
+    headShapes.push(
+      poly([[6.2, 8.4], [1.5, 11.9], [-5, 11.2], [-9.6, 6.5], [-10.3, -0.5], [-8.4, -7], [-5.2, -8.6], [-5.6, -2.5], [-3.4, 3.6], [2.2, 7]], 'hair'),
+    );
+    headShapes.push(dot(5.6, 0.8));
+  } else if (p.facing === 'back') {
+    headShapes.push(
+      poly([[-9.9, 1], [-9, 7.2], [-5, 11.2], [0, 12.2], [5, 11.2], [9, 7.2], [9.9, 1], [9.2, -5], [5.5, -9], [0, -10], [-5.5, -9], [-9.2, -5]], 'hair'),
+    );
+  } else {
+    headShapes.push(
+      poly([[-9.9, 0.5], [-9, 7.2], [-5, 11.2], [0, 12.2], [5, 11.2], [9, 7.2], [9.9, 0.5], [8.2, 4.4], [4.2, 7.6], [0, 8.3], [-4.2, 7.6], [-8.2, 4.4]], 'hair'),
+    );
+    headShapes.push(dot(-3.5, -0.2), dot(3.5, -0.2));
+  }
   parts.head = headShapes;
   segs.neck = { a: neckStart, b: neckTop, ra: R.neck[0], rb: R.neck[1], frontSign: -1 };
   segs.head = { a: add(headC, headDir, -10), b: add(headC, headDir, 8), ra: 9, rb: 9, frontSign: -1 };
@@ -446,6 +490,8 @@ function lerpScale(a: Pose['scale'], b: Pose['scale'], t: number): Pose['scale']
 export interface ActorFrame {
   svg: string;
   joints: Joints;
+  /** Centre of each highlighted muscle (by muscle id), for label leader lines. */
+  anchors: Record<string, Pt>;
 }
 
 const toDeg = (v: Pt) => (Math.atan2(v.x, v.y) * 180) / Math.PI;
@@ -539,29 +585,34 @@ export function renderActor(pose: Pose, role: Role, opts: RenderOpts): ActorFram
   }
 
   const pre = role === 'main' ? 'fig' : 'fig-p';
-  const near = `${pre}`;
-  const far = `${pre}-far`;
+  const anchors: Record<string, Pt> = {};
 
   // Each body part is drawn twice: a thin background-coloured outline of the whole part,
-  // then the fill. Overlapping parts (an arm in front of the torso) stay readable while a
-  // part has no seams at its own joints.
-  const draw = (key: string, cls: string) => {
+  // then the fills (skin, shirt, trousers…). Overlapping parts (an arm in front of the torso)
+  // stay readable while a part has no seams at its own joints.
+  const draw = (key: string, far = false) => {
     const shapes = b.parts[key] ?? [];
-    return shapes.map((sh) => shapeToSvg(sh, 'fig-o')).join('') + shapes.map((sh) => shapeToSvg(sh, cls)).join('');
+    const outline = shapes.filter((sh) => sh.mat !== 'eye' && sh.mat !== 'hair').map((sh) => shapeToSvg(sh, 'fig-o')).join('');
+    return outline + shapes.map((sh) => shapeToSvg(sh, `${pre}-${sh.mat ?? 'skin'}${far ? ' far' : ''}`)).join('');
   };
+  const TORSO_PARTS = ['torso', 'glutes', 'gluteMed', 'piriformis'];
   const hl = (keys: string[]) =>
     (opts.muscles ?? [])
-      .filter((h) => keys.some((k) => h.part === k || (k === 'torso' && h.part === 'glutes')))
-      .map((h) => highlightSvg(b, h))
+      .filter((h) => keys.includes(h.part) || (keys[0] === 'torso' && TORSO_PARTS.includes(h.part)))
+      .map((h) => {
+        const r = highlightSvg(b, h);
+        if (h.muscle && r.anchor && !anchors[h.muscle]) anchors[h.muscle] = r.anchor;
+        return r.svg;
+      })
       .join('');
 
   const front = b.view === 'front';
-  const armR = draw('armR', near) + hl(['upperArmR', 'forearmR']);
-  const armL = draw('armL', front ? near : far) + hl(['upperArmL', 'forearmL']);
-  const legR = draw('legR', near) + hl(['thighR', 'shinR', 'footR']);
-  const legL = draw('legL', front ? near : far) + hl(['thighL', 'shinL', 'footL']);
-  const torso = draw('torso', near) + hl(['torso']);
-  const head = draw('neck', near) + hl(['neck']) + draw('head', `${near} ${pre}-head`) + hl(['head']);
+  const armR = draw('armR') + hl(['upperArmR', 'forearmR']);
+  const armL = draw('armL', !front) + hl(['upperArmL', 'forearmL']);
+  const legR = draw('legR') + hl(['thighR', 'shinR', 'footR']);
+  const legL = draw('legL', !front) + hl(['thighL', 'shinL', 'footL']);
+  const torso = draw('torso') + hl(['torso']);
+  const head = draw('neck') + hl(['neck']) + draw('head') + hl(['head']);
 
   let body: string;
   if (front) {
@@ -578,20 +629,31 @@ export function renderActor(pose: Pose, role: Role, opts: RenderOpts): ActorFram
   const joints = b.joints;
   if (flipX !== undefined) {
     for (const j of Object.values(joints)) j.x = 2 * flipX - j.x;
+    for (const j of Object.values(anchors)) j.x = 2 * flipX - j.x;
     body = `<g transform="translate(${f1(2 * flipX)} 0) scale(-1 1)">${body}</g>`;
   }
-  return { svg: body, joints };
+  return { svg: body, joints, anchors };
 }
 
-function highlightSvg(b: Built, h: Highlight): string {
+function highlightSvg(b: Built, h: Highlight): { svg: string; anchor?: Pt } {
   const from = h.from ?? 0.15;
   const to = h.to ?? 0.85;
   const side = h.side ?? 0;
-  if (h.part === 'glutes') {
+  const cls = `mus mus-${h.level ?? 'primary'}`;
+  const mid = (p: Pt, q: Pt): Pt => lerpPt(p, q, 0.5);
+  if (h.part === 'glutes' || h.part === 'gluteMed' || h.part === 'piriformis') {
     const pel = b.spine.pts[0];
-    const n = frontOf(b.spine.dirs[0], -1);
-    const c = add(add(pel, n, b.view === 'front' ? 0 : -5.5), b.spine.dirs[0], -1);
-    return `<circle class="fig-muscle" cx="${f1(c.x)}" cy="${f1(c.y)}" r="${b.view === 'front' ? 9 : 7.5}"/>`;
+    const up = b.spine.dirs[0];
+    const n = frontOf(up, -1);
+    const isFront = b.view === 'front';
+    // [toward the back, up along the spine, radius]
+    const spec = {
+      glutes: [isFront ? 0 : -5.5, -1.5, isFront ? 9 : 7.8],
+      gluteMed: [isFront ? side * 9 : -4, 6.5, isFront ? 5.5 : 5.2],
+      piriformis: [isFront ? side * 5 : -6.5, 0.5, 4.4],
+    }[h.part];
+    const c = add(add(pel, n, spec[0]), up, spec[1]);
+    return { svg: `<circle class="${cls}" cx="${f1(c.x)}" cy="${f1(c.y)}" r="${spec[2]}"/>`, anchor: c };
   }
   if (h.part === 'torso') {
     const { pts, dirs, front, back } = b.spine;
@@ -604,18 +666,19 @@ function highlightSvg(b: Built, h: Highlight): string {
       const d = dirs[i];
       const w = side >= 0 ? lerp(front[i], front[i + 1], t) : lerp(back[i], back[i + 1], t);
       const nn = frontOf(d, -1);
-      return { c: add(p, nn, side * w * 0.45), r: Math.max(2.5, w * (side === 0 ? 0.55 : 0.5)) };
+      const narrow = Math.abs(side) > 0 && Math.abs(side) < 1 ? 0.36 : side === 0 ? 0.55 : 0.5;
+      return { c: add(p, nn, side * w * 0.45), r: Math.max(2.5, w * narrow) };
     };
     const a = at(from);
     const m = at((from + to) / 2);
     const z = at(to);
-    return (
-      `<path class="fig-muscle" d="${capsule(a.c, m.c, a.r, m.r).d}"/>` +
-      `<path class="fig-muscle" d="${capsule(m.c, z.c, m.r, z.r).d}"/>`
-    );
+    return {
+      svg: `<path class="${cls}" d="${capsule(a.c, m.c, a.r, m.r).d}"/>` + `<path class="${cls}" d="${capsule(m.c, z.c, m.r, z.r).d}"/>`,
+      anchor: m.c,
+    };
   }
   const s = b.segs[h.part];
-  if (!s) return '';
+  if (!s) return { svg: '' };
   const a = lerpPt(s.a, s.b, from);
   const z = lerpPt(s.a, s.b, to);
   const d = { x: s.b.x - s.a.x, y: s.b.y - s.a.y };
@@ -626,5 +689,7 @@ function highlightSvg(b: Built, h: Highlight): string {
   const rz = lerp(s.ra, s.rb, to);
   const k = side === 0 ? 0.62 : 0.5;
   const off = side * 0.42;
-  return `<path class="fig-muscle" d="${capsule(add(a, n, off * ra), add(z, n, off * rz), ra * k, rz * k).d}"/>`;
+  const pa = add(a, n, off * ra);
+  const pz = add(z, n, off * rz);
+  return { svg: `<path class="${cls}" d="${capsule(pa, pz, ra * k, rz * k).d}"/>`, anchor: mid(pa, pz) };
 }

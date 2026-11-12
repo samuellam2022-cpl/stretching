@@ -1,14 +1,3 @@
-/** Body part IDs. Add a new one here AND in stretches.json "bodyParts". */
-export type BodyPartId =
-  | 'neck'
-  | 'shoulders'
-  | 'back'
-  | 'lower-back'
-  | 'hips'
-  | 'front-thigh'
-  | 'back-thigh'
-  | 'calves';
-
 /** Text in both languages. "zh" is Traditional Chinese (Hong Kong). */
 export interface Localized {
   en: string;
@@ -18,28 +7,42 @@ export interface Localized {
 /** How the stretch is done. */
 export type StretchType = 'solo' | 'partner' | 'equipment';
 
-export interface BodyPart {
-  id: BodyPartId;
+export type MapView = 'front' | 'back';
+
+/** A tappable area of the body map, e.g. "neck". */
+export interface Region {
+  id: string;
   name: Localized;
-  /** A short emoji or symbol shown on the body-part tile. */
-  icon: string;
-  description: Localized;
+  /** Which side(s) of the body map show this region. */
+  views: MapView[];
+}
+
+export interface Muscle {
+  id: string;
+  /** Region id this muscle is listed under. */
+  region: string;
+  /** Side of the body map used for its location thumbnail. */
+  view: MapView;
+  name: Localized;
+  /** Plain-language description of where the muscle is. */
+  where: Localized;
 }
 
 export interface Stretch {
   /** Unique, URL-safe id, e.g. "neck-side-bend". Favourites are stored by this id. */
   id: string;
   name: Localized;
-  bodyPart: BodyPartId;
   type: StretchType;
   /** One-line description shown in lists. */
   summary: Localized;
-  /** How long to hold, in seconds. */
-  holdSeconds: number;
-  /** True if the stretch is done on one side, then repeated on the other. */
+  /** Seconds to hold; defaults to "defaults.holdSeconds" (30). */
+  holdSeconds?: number;
+  /** Number of sets; defaults to "defaults.sets" (2). */
+  sets?: number;
+  /** True if the stretch is done on one side, then repeated on the other (each side is timed separately). */
   perSide: boolean;
-  /** Muscle ids (keys of "muscles" at the top of stretches.json). */
-  muscles?: { primary: string[]; secondary: string[] };
+  /** Muscle ids. A stretch is listed under each of its primary muscles. */
+  muscles: { primary: string[]; secondary: string[] };
   /** Items needed (only for type "equipment"). */
   equipment?: Localized[];
   steps: Localized[];
@@ -47,8 +50,8 @@ export interface Stretch {
 }
 
 export interface StretchData {
-  /** Muscle names by id, shown as "primary" / "secondary" tags. */
-  muscles: Record<string, Localized>;
-  bodyParts: BodyPart[];
+  defaults: { holdSeconds: number; sets: number };
+  regions: Region[];
+  muscles: Muscle[];
   stretches: Stretch[];
 }

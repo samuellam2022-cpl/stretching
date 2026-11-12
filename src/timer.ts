@@ -1,14 +1,41 @@
 import { t } from './i18n';
 
 /**
- * Hold timer for a stretch. Counts down holdSeconds, and for per-side stretches
- * runs a short "switch sides" pause and a second countdown.
+ * Hold timer for a stretch: holdSeconds × sets, and for per-side stretches each
+ * side is its own timed step (right, left, right, left…), with a short pause to
+ * switch sides and a rest between sets.
  */
 
 const SWITCH_SECONDS = 5;
+const REST_SECONDS = 10;
 const RING = 2 * Math.PI * 54; // circumference of the SVG ring (r = 54)
+export const RING_LENGTH = RING;
 
-type Phase = { label: string; seconds: number; kind: 'hold' | 'switch' };
+export interface TimerPlan {
+  holdSeconds: number;
+  sets: number;
+  perSide: boolean;
+}
+
+export interface Segment {
+  set: number;
+  side?: 'R' | 'L';
+}
+
+/** The timed steps of a stretch, in order. */
+export function segmentsOf(plan: TimerPlan): Segment[] {
+  const out: Segment[] = [];
+  for (let set = 1; set <= plan.sets; set++) {
+    if (plan.perSide) out.push({ set, side: 'R' }, { set, side: 'L' });
+    else out.push({ set });
+  }
+  return out;
+}
+
+export const segmentLabel = (s: Segment): string =>
+  s.side ? t('segSide', { side: t(s.side === 'R' ? 'sideR' : 'sideL'), n: s.set }) : t('setN', { n: s.set });
+
+type Phase = { label: string; seconds: number; kind: 'hold' | 'switch' | 'rest'; seg: number };
 
 let interval: number | undefined;
 let wakeLock: { release(): Promise<void> } | null = null;
@@ -51,15 +78,30 @@ export function stopTimer(): void {
   void keepAwake(false);
 }
 
-export function startTimer(root: HTMLElement, holdSeconds: number, perSide: boolean): void {
+function markSegments(root: HTMLElement, current: number, doneBelow: number): void {
+  root.querySelectorAll<HTMLElement>('[data-seg]').forEach((el) => {
+    const i = Number(el.dataset.seg);
+    el.dataset.state = i < doneBelow ? 'done' : i === current ? 'current' : 'todo';
+  });
+}
+
+/** Start the timer, optionally from a later step (e.g. the left side of set 1). */
+export function startTimer(root: HTMLElement, plan: TimerPlan, fromSegment = 0): void {
   stopTimer();
-  const phases: Phase[] = perSide
-    ? [
-        { label: t('timerFirst'), seconds: holdSeconds, kind: 'hold' },
-        { label: t('timerSwitch'), seconds: SWITCH_SECONDS, kind: 'switch' },
-        { label: t('timerSecond'), seconds: holdSeconds, kind: 'hold' },
-      ]
-    : [{ label: t('timerHold'), seconds: holdSeconds, kind: 'hold' }];
+  const segs = segmentsOf(plan);
+  const phases: Phase[] = [];
+  segs.forEach((s, i) => {
+    if (i < fromSegment) return;
+    if (i > fromSegment) {
+      const prev = segs[i - 1];
+      phases.push(
+        prev.set === s.set
+          ? { label: t('timerSwitch'), seconds: SWITCH_SECONDS, kind: 'switch', seg: i }
+          : { label: t('timerRest'), seconds: REST_SECONDS, kind: 'rest', seg: i },
+      );
+    }
+    phases.push({ label: segmentLabel(s), seconds: plan.holdSeconds, kind: 'hold', seg: i });
+  });
 
   const timeEl = root.querySelector<HTMLElement>('[data-timer-time]')!;
   const labelEl = root.querySelector<HTMLElement>('[data-timer-label]')!;
@@ -73,14 +115,14 @@ export function startTimer(root: HTMLElement, holdSeconds: number, perSide: bool
     const p = phases[index];
     endAt = Date.now() + p.seconds * 1000;
     labelEl.textContent = p.label;
-    root.dataset.kind = p.kind;
+    root.dataset.kind = p.kind === 'hold' ? 'hold' : 'switch';
+    markSegments(root, p.kind === 'hold' ? p.seg : -1, p.seg);
   };
 
   const tick = () => {
     const p = phases[index];
     const left = Math.max(0, endAt - Date.now());
-    const secs = Math.ceil(left / 1000);
-    timeEl.textContent = String(secs);
+    timeEl.textContent = String(Math.ceil(left / 1000));
     ring.style.strokeDashoffset = String(RING * (1 - left / (p.seconds * 1000)));
     if (left <= 0) {
       index += 1;
@@ -93,13 +135,13 @@ export function startTimer(root: HTMLElement, holdSeconds: number, perSide: bool
         labelEl.textContent = t('timerDone');
         timeEl.textContent = '✓';
         root.dataset.kind = 'done';
+        markSegments(root, -1, segs.length);
         btn.textContent = t('timerAgain');
         btn.dataset.running = 'false';
       }
     }
   };
 
-  root.dataset.active = 'true';
   btn.textContent = t('timerStop');
   btn.dataset.running = 'true';
   beep(660, 80);
@@ -115,9 +157,8 @@ export function resetTimerUI(root: HTMLElement, holdSeconds: number): void {
   root.querySelector<HTMLElement>('[data-timer-time]')!.textContent = String(holdSeconds);
   root.querySelector<HTMLElement>('[data-timer-label]')!.textContent = t('timerReady');
   root.querySelector<SVGCircleElement>('[data-timer-ring]')!.style.strokeDashoffset = '0';
+  markSegments(root, -1, 0);
   const btn = root.querySelector<HTMLButtonElement>('[data-timer-toggle]')!;
   btn.textContent = t('timerStart');
   btn.dataset.running = 'false';
 }
-
-export const RING_LENGTH = RING;

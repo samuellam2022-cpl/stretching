@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Stretching',
-        short_name: 'Stretching',
-        description: 'Stretches by body part – solo, partner or with equipment.',
+        name: 'Post-workout Stretch 運動後拉筋',
+        short_name: '拉筋',
+        description: 'Post-workout stretches by muscle – body map, illustrated demos, hold timer. 中／EN',
         start_url: '/stretching/',
         scope: '/stretching/',
         display: 'standalone',

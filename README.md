@@ -1,58 +1,67 @@
-# Stretching
+# 運動後拉筋 · Post-workout Stretch
 
-A touch-friendly stretching app for iPhone, built with Vite + TypeScript and installable as a PWA.
+A muscle-first post-workout stretching app for iPhone, built with Vite + TypeScript and installable as a PWA. Traditional Chinese (Hong Kong) and English.
 
 **Live:** https://samuellam2022-cpl.github.io/stretching/
 
-## Features
+## How it works
 
-- Browse stretches by body part: neck, shoulders, back, lower back, hips, front of thigh, back of thigh, calves
-- Filter each body part by **Solo / Partner / Needs equipment**
-- Stretch detail: steps, hold time (seconds, with a built-in countdown timer), safety notes
-- Favourites saved on your device (localStorage)
-- Animated demonstration for every stretch: a simple figure moves slowly between the start and end positions (about 3 seconds per cycle), with the muscles being stretched shown in red. Partner stretches show two people and equipment is drawn. It follows dark mode, and with iPhone **Reduce Motion** on it shows the final position without moving
-- Primary (green) and secondary (grey) muscle tags, plus a **Demo videos** button that opens a YouTube search for the stretch's English name
-- English and Traditional Chinese (Hong Kong) – tap **中／EN** at the top right. The first visit follows the phone's language; your choice is remembered
-- Works offline once loaded; add it to your Home Screen to use it like an app
+1. **Body map** – a 2D figure you can flip between front and back. Tap the part of the body you trained; it lights up.
+2. **Muscles** – the muscles in that part are listed with both Chinese and English names and a small picture of where each one is (26 muscles in 13 body parts).
+3. **Stretches** – tap a muscle to see every stretch that has it as a *primary* muscle (at least 3 per muscle), filtered by Solo / Partner / Needs equipment.
+4. **Stretch page**
+   - An animated flat illustration of one consistent character (skin, hair, T-shirt, trousers; rounded limbs). Partner stretches show a second person; equipment is drawn.
+   - Primary muscles are overlaid in semi-transparent **red**, secondary in **orange**, each with a label box (Chinese + English name, Primary/Secondary) and a leader line to the muscle. An arrow with a short cue shows the key movement (e.g. "Heel toward buttock").
+   - Primary / secondary muscle tags below the picture; tapping one opens that muscle's stretch list.
+   - Timer: hold **30 seconds × 2 sets** by default, with **left and right timed separately** (right 1 → left 1 → right 2 → left 2). Tap any step to start from it.
+   - Steps, safety notes, equipment, and a "Demo videos" button that opens a YouTube search for the English name.
+- Favourites are saved on the device (localStorage). Works offline once loaded. Follows dark mode and iPhone **Reduce Motion** (shows the final position without moving).
+- Language: tap **中／EN** at the top right. The first visit follows the phone's language; the choice is remembered.
 
 ## Install on iPhone
 
 Open the live link in Safari → Share → **Add to Home Screen**.
 
-## Adding stretches
+## Data
 
-All stretch data is in [`src/data/stretches.json`](src/data/stretches.json). Every piece of text is bilingual: `{ "en": "...", "zh": "..." }` (`zh` = Traditional Chinese, Hong Kong usage). Add an object to `stretches`:
+Everything is in [`src/data/stretches.json`](src/data/stretches.json). All text is bilingual: `{ "en": "...", "zh": "..." }` (`zh` = Traditional Chinese, Hong Kong usage; if empty, English is shown).
+
+- `defaults` – `holdSeconds` (30) and `sets` (2) for every stretch.
+- `regions` – the tappable body parts, and which side(s) of the map show them.
+- `muscles` – `id`, `region`, `view` (`front`/`back`, used for the location picture), `name`, `where`.
+- `stretches` – one object each:
 
 ```json
 {
-  "id": "calves-downward-dog",
-  "bodyPart": "calves",
+  "id": "calves-kneeling-soleus",
   "type": "solo",
-  "holdSeconds": 30,
   "perSide": true,
-  "name": { "en": "Downward dog calf pedal", "zh": "下犬式踩腳跟" },
+  "name": { "en": "Kneeling ankle stretch", "zh": "跪姿腳踝伸展" },
   "summary": { "en": "One line shown in the list.", "zh": "列表顯示嘅一句簡介。" },
+  "muscles": { "primary": ["soleus"], "secondary": [] },
   "equipment": [{ "en": "Only when type is equipment", "zh": "只係 type 係 equipment 先需要" }],
-  "steps": [
-    { "en": "Step one", "zh": "第一步" },
-    { "en": "Step two", "zh": "第二步" }
-  ],
+  "steps": [{ "en": "Step one", "zh": "第一步" }],
   "safety": [{ "en": "Safety note", "zh": "注意事項" }]
 }
 ```
 
-- `id` – unique, lowercase, dashes only. Favourites are stored by id, so don't rename an id once in use.
-- `bodyPart` – one of `neck`, `shoulders`, `back`, `lower-back`, `hips`, `front-thigh`, `back-thigh`, `calves`
-- `type` – `solo`, `partner` or `equipment`
-- `perSide` – `true` if done on one side then the other (the timer runs both sides)
-- `muscles` – `{ "primary": [...], "secondary": [...] }` using ids from the `muscles` list at the top of the file (add new muscles there with `en`/`zh` names)
-- If a `zh` text is empty, the English is shown instead.
+- `id` – unique, lowercase, dashes only. Favourites are stored by id, so don't rename one in use.
+- `type` – `solo`, `partner` or `equipment`.
+- `perSide` – `true` if done on one side then the other (each side gets its own timer steps).
+- `muscles.primary` / `muscles.secondary` – muscle ids. A stretch is listed under each of its primary muscles.
+- Optional `holdSeconds` / `sets` override the defaults for one stretch.
 
-Invalid entries are skipped with a warning in the browser console. To add a new body part, add it to `bodyParts` in the JSON and to `BodyPartId` in `src/types.ts`. UI labels (buttons, headings) live in `src/i18n.ts`.
+Invalid entries are skipped with a warning in the browser console. UI labels live in `src/i18n.ts`.
 
-### Demo animations
+### Body map and muscle pictures
 
-Animations live in [`src/figure/scenes.ts`](src/figure/scenes.ts), keyed by stretch id. A new stretch without an entry still works; it just has no animation. Each scene gives a start pose and an end pose as joint angles (0° = pointing down, 90° = forward, 180° = up), optional equipment, and the muscles to colour red. To preview every animation, run `npm run dev` and open `http://localhost:5173/stretching/dev/gallery.html` (add `?live` to see them move, `?id=<stretch id>` for one).
+[`src/bodymap.ts`](src/bodymap.ts) holds the front/back outlines, the region shapes, and each muscle's shape for its location picture. A new muscle needs a shape there (otherwise its picture shows only the outline).
+
+### Demo illustrations
+
+Scenes live in [`src/figure/scenes.ts`](src/figure/scenes.ts), keyed by stretch id. A stretch without a scene still works; it just has no picture. Each scene gives a start pose and an end pose as joint angles (0° = pointing down, 90° = forward, 180° = up), optional equipment, and an optional `arrow` cue. Muscle overlays are placed automatically from the stretch's muscle list (defaults in `src/figure/muscleMap.ts`); a scene can override a position with `hl`.
+
+To preview every illustration, run `npm run dev` and open `http://localhost:5173/stretching/dev/gallery.html` (add `?live` to see them move, `?id=<stretch id>` for one, `?lang=en` for English labels).
 
 ## Development
 
