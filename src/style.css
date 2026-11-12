@@ -718,35 +718,66 @@ svg {
 /* ---------- Demo figure ---------- */
 
 :root {
-  --fig: #4f7cac;
-  --fig-far: #3c6290;
-  --fig-p: #a3aab3;
-  --fig-p-far: #868e98;
-  --fig-head: #4f7cac;
-  --muscle: #e5484d;
+  /* One character throughout: skin, hair, T-shirt, trousers, shoes. */
+  --skin: #f0c19c;
+  --skin-far: #dba983;
+  --hair: #3d2c24;
+  --shirt: #2f8f9d;
+  --shirt-far: #26737f;
+  --pants: #34425a;
+  --pants-far: #283346;
+  --shoe: #f4f6f7;
+  --shoe-far: #d5dadd;
+  --eye: #2b2420;
+  /* The partner: same style, different clothes. */
+  --p-skin: #d9a47e;
+  --p-skin-far: #c08e6a;
+  --p-hair: #5b4a42;
+  --p-shirt: #9a8fc0;
+  --p-shirt-far: #8177a6;
+  --p-pants: #6d6f7c;
+  --p-pants-far: #595b67;
+  --mus-primary: #e5383b;
+  --mus-secondary: #f08a1c;
   --prop: #c9d3cf;
   --prop-dark: #a9b5b0;
   --prop-accent: #8fc9b0;
-  --strap: #d08a2c;
+  --strap: #b5651d;
   --floor: #e2e8e5;
   --mat: #e6efea;
   --demo-bg: #fbfcfc;
+  --label-bg: #ffffff;
+  --label-text: #17201c;
+  --map-body: #dfe6e3;
+  --map-region: #c9d6d1;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --fig: #7fa7d4;
-    --fig-far: #5d84b0;
-    --fig-p: #6c7580;
-    --fig-p-far: #565e68;
-    --muscle: #ff6369;
+    --skin: #e3b28c;
+    --skin-far: #c99a76;
+    --hair: #5a4338;
+    --shirt: #3fa7b6;
+    --shirt-far: #328896;
+    --pants: #56688a;
+    --pants-far: #465673;
+    --shoe: #e6eaec;
+    --shoe-far: #bcc3c7;
+    --p-shirt: #a89dd0;
+    --p-pants: #7e8090;
+    --mus-primary: #ff5a5f;
+    --mus-secondary: #ffa23a;
     --prop: #34413c;
     --prop-dark: #2a3531;
     --prop-accent: #2f6b54;
-    --strap: #e8a64a;
+    --strap: #e0a25a;
     --floor: #26302c;
     --mat: #1f2a26;
     --demo-bg: #141b18;
+    --label-bg: #222c28;
+    --label-text: #e8efec;
+    --map-body: #2a3531;
+    --map-region: #3a4843;
   }
 }
 
@@ -756,43 +787,42 @@ svg {
   height: auto;
 }
 
-.fig {
-  fill: var(--fig);
-}
-.fig-far {
-  fill: var(--fig-far);
-}
-.fig-p {
-  fill: var(--fig-p);
-}
-.fig-p-far {
-  fill: var(--fig-p-far);
-}
+.fig-skin { fill: var(--skin); }
+.fig-skin.far { fill: var(--skin-far); }
+.fig-shirt { fill: var(--shirt); }
+.fig-shirt.far { fill: var(--shirt-far); }
+.fig-pants { fill: var(--pants); }
+.fig-pants.far { fill: var(--pants-far); }
+.fig-shoe { fill: var(--shoe); stroke: var(--pants); stroke-width: 0.6; }
+.fig-shoe.far { fill: var(--shoe-far); }
+.fig-hair { fill: var(--hair); }
+.fig-eye, .fig-p-eye { fill: var(--eye); }
+.fig-p-skin { fill: var(--p-skin); }
+.fig-p-skin.far { fill: var(--p-skin-far); }
+.fig-p-shirt { fill: var(--p-shirt); }
+.fig-p-shirt.far { fill: var(--p-shirt-far); }
+.fig-p-pants { fill: var(--p-pants); }
+.fig-p-pants.far { fill: var(--p-pants-far); }
+.fig-p-shoe { fill: var(--shoe); stroke: var(--p-pants); stroke-width: 0.6; }
+.fig-p-shoe.far { fill: var(--shoe-far); }
+.fig-p-hair { fill: var(--p-hair); }
+
 .fig-o {
   fill: var(--demo-bg);
   stroke: var(--demo-bg);
-  stroke-width: 2.6;
+  stroke-width: 2.4;
   stroke-linejoin: round;
 }
-.fig-muscle {
-  fill: var(--muscle);
-  opacity: 0.88;
-}
-.floor {
-  fill: var(--floor);
-}
-.mat {
-  fill: var(--mat);
-}
-.prop {
-  fill: var(--prop);
-}
-.prop-dark {
-  fill: var(--prop-dark);
-}
-.prop-accent {
-  fill: var(--prop-accent);
-}
+
+/* Muscle overlays: semi-transparent so the body shows through. */
+.mus-primary { fill: var(--mus-primary); opacity: 0.62; }
+.mus-secondary { fill: var(--mus-secondary); opacity: 0.66; }
+
+.floor { fill: var(--floor); }
+.mat { fill: var(--mat); }
+.prop { fill: var(--prop); }
+.prop-dark { fill: var(--prop-dark); }
+.prop-accent { fill: var(--prop-accent); }
 .prop-line {
   fill: none;
   stroke: var(--demo-bg);
@@ -806,11 +836,58 @@ svg {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.strap {
-  stroke-width: 2.6;
+.strap { stroke-width: 2.6; }
+.towel { stroke-width: 5; }
+
+/* Label boxes with leader lines */
+.demo-label-box {
+  fill: var(--label-bg);
+  stroke-width: 1.2;
 }
-.towel {
-  stroke-width: 5;
+.demo-label-primary .demo-label-box { stroke: var(--mus-primary); }
+.demo-label-secondary .demo-label-box { stroke: var(--mus-secondary); }
+.demo-label-title {
+  fill: var(--label-text);
+  font-size: 9.5px;
+  font-weight: 700;
+}
+.demo-label-sub {
+  fill: var(--muted);
+  font-size: 7.2px;
+}
+.demo-label-primary .demo-label-pill { fill: var(--mus-primary); }
+.demo-label-secondary .demo-label-pill { fill: var(--mus-secondary); }
+.demo-label-level {
+  fill: #fff;
+  font-size: 6.5px;
+  font-weight: 700;
+}
+.demo-leader {
+  fill: none;
+  stroke-width: 1.1;
+  stroke-dasharray: 2.5 2;
+}
+.demo-leader-primary { stroke: var(--mus-primary); fill: var(--mus-primary); }
+.demo-leader-secondary { stroke: var(--mus-secondary); fill: var(--mus-secondary); }
+.demo-leader-dot { stroke: var(--label-bg); stroke-width: 0.8; }
+
+/* Movement arrow */
+.demo-arrow {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+.demo-arrow-head { fill: var(--text); opacity: 0.85; }
+.demo-arrow-text {
+  fill: var(--text);
+  font-size: 8.5px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: var(--demo-bg);
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }
 
 /* ---------- Demo card ---------- */
@@ -848,12 +925,30 @@ svg {
   display: flex;
 }
 
+.demo-legend {
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.demo-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .demo-swatch {
   flex: none;
   width: 12px;
   height: 12px;
   border-radius: 3px;
-  background: var(--muscle);
+}
+
+.swatch-primary {
+  background: var(--mus-primary);
+}
+
+.swatch-secondary {
+  background: var(--mus-secondary);
 }
 
 .muscle-row {
@@ -879,20 +974,42 @@ svg {
 }
 
 .muscle {
-  padding: 4px 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 40px;
+  padding: 0 8px 0 14px;
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+.muscle .chevron {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+}
+
+.muscle:active {
+  transform: scale(0.96);
+  opacity: 0.8;
+}
+
+.muscle-hint {
+  margin: 10px 2px 0;
+  font-size: 13px;
+  color: var(--muted);
 }
 
 .muscle-primary {
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: var(--mus-primary);
+  color: #fff;
 }
 
 .muscle-secondary {
-  background: var(--surface-2);
-  color: var(--muted);
+  background: var(--mus-secondary);
+  color: #2b1a00;
 }
 
 .btn-video {
@@ -926,4 +1043,211 @@ svg {
 .btn-video:active {
   transform: scale(0.98);
   opacity: 0.85;
+}
+
+/* ---------- Body map (main screen) ---------- */
+
+.seg {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin: 0 auto 8px;
+  max-width: 280px;
+  background: var(--surface-2);
+  border-radius: 14px;
+}
+
+.seg-btn {
+  flex: 1;
+  min-height: 40px;
+  border-radius: 10px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.seg-btn[aria-selected='true'] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+}
+
+.map-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 8px;
+}
+
+.bodymap {
+  /* Whole body visible above the tab bar on a phone, without scrolling. */
+  height: min(52vh, 460px);
+  height: min(52dvh, 460px);
+  width: auto;
+  max-width: 100%;
+  touch-action: manipulation;
+}
+
+.map-skin { fill: var(--skin); }
+.map-hair { fill: var(--hair); }
+.map-eye { fill: var(--eye); }
+.map-extra { fill: var(--map-body); stroke: var(--bg); stroke-width: 1.5; stroke-linejoin: round; }
+
+.map-region {
+  fill: var(--map-region);
+  stroke: var(--bg);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: fill 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.map-region:active { fill: var(--accent-soft); }
+.map-region:focus-visible { stroke: var(--accent); stroke-width: 3; }
+.map-region.sel { fill: var(--accent); }
+
+.region-chips {
+  margin-bottom: 4px;
+}
+
+.region-chip[aria-current='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.panel-title {
+  margin: 16px 0 10px;
+  font-size: 18px;
+}
+
+/* ---------- Muscle rows and thumbnails ---------- */
+
+.muscle-link {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 10px 10px 10px;
+}
+
+.muscle-card {
+  grid-template-columns: 1fr;
+}
+
+.muscle-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.muscle-other {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.thumb-box {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  background: var(--demo-bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.thumb-lg {
+  width: 104px;
+  height: 104px;
+}
+
+.muscle-thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.map-thumb-body { fill: var(--map-body); stroke: var(--demo-bg); stroke-width: 1.2; stroke-linejoin: round; }
+.map-muscle { fill: var(--mus-primary); stroke: var(--demo-bg); stroke-width: 0.8; stroke-linejoin: round; }
+
+.chevron {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+}
+
+.muscle-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 4px;
+}
+
+.muscle-head .detail-title {
+  margin-bottom: 2px;
+  font-size: 24px;
+}
+
+/* ---------- Timer: sets and sides ---------- */
+
+.timer {
+  display: block;
+}
+
+.timer-top {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.hold-note {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.seg-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.seg-chips li {
+  flex: 1 1 calc(50% - 8px);
+}
+
+.seg-chip {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1.5px solid transparent;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.seg-chip[data-state='current'] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.seg-chip[data-state='done'] {
+  color: var(--accent);
+}
+
+.seg-chip[data-state='done']::before {
+  content: '✓ ';
+}
+
+.seg-chip:active {
+  opacity: 0.7;
 }
