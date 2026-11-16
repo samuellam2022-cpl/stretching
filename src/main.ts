@@ -1,5 +1,5 @@
 import './style.css';
-import { getMuscle, getRegion, getStretch, holdSeconds, setsOf } from './data';
+import { getRegion, getStretch, nameOf } from './data';
 import { toggleFavourite } from './favourites';
 import { mountDemo, type Demo, type DemoLabel } from './figure/player';
 import { sceneFor } from './figure/scenes';
@@ -10,6 +10,7 @@ import {
   FILTERS,
   favLabel,
   favouritesView,
+  groupView,
   homeView,
   muscleView,
   notFoundView,
@@ -83,9 +84,9 @@ function resolve(hash: string): View {
     return homeView(isView(extra) && region.views.includes(extra) ? extra : region.views[0], id);
   }
   if (section === 'favourites') return favouritesView();
-  if (section === 'muscle' && id) {
+  if ((section === 'group' || section === 'muscle') && id) {
     const filter: Filter = FILTERS.includes(extra as Filter) ? (extra as Filter) : 'all';
-    return muscleView(id, filter) ?? notFoundView();
+    return (section === 'group' ? groupView(id, filter) : muscleView(id, filter)) ?? notFoundView();
   }
   if (section === 'stretch' && id) return stretchView(id) ?? notFoundView();
   return notFoundView();
@@ -103,15 +104,16 @@ function demoFor(s: Stretch): Demo | null {
   const scene = sceneFor(s.id);
   if (!scene) return null;
   const label = (id: string, level: DemoLabel['level']): DemoLabel | null => {
-    const m = getMuscle(id);
-    return m ? { id, level, title: loc(m.name), sub: locOther(m.name), levelText: t(level) } : null;
+    // The legacy scenes were drawn for the old muscle ids, so labels only appear for ids that still exist.
+    const n = nameOf(id);
+    return n ? { id, level, title: loc(n), sub: locOther(n), levelText: t(level) } : null;
   };
   return {
     scene,
-    muscles: s.muscles,
+    muscles: { primary: s.primary, secondary: s.secondary },
     labels: [
-      ...s.muscles.primary.map((id) => label(id, 'primary')),
-      ...s.muscles.secondary.map((id) => label(id, 'secondary')),
+      ...s.primary.map((id) => label(id, 'primary')),
+      ...s.secondary.map((id) => label(id, 'secondary')),
     ].filter((l): l is DemoLabel => !!l),
     arrowText: scene.arrow ? loc(scene.arrow.label) : '',
     aria: t('demoLabel', { name: loc(s.name) }),
@@ -170,7 +172,7 @@ const currentStretch = (): Stretch | undefined => {
   const [section, id] = parseRoute(location.hash);
   return section === 'stretch' && id ? getStretch(id) : undefined;
 };
-const planFor = (s: Stretch): TimerPlan => ({ holdSeconds: holdSeconds(s), sets: setsOf(s), perSide: s.perSide });
+const planFor = (s: Stretch): TimerPlan => ({ holdSeconds: s.holdSeconds, sets: s.sets, perSide: s.perSide });
 
 function selectRegion(regionId: string): void {
   const [section, , view] = parseRoute(location.hash);
@@ -222,9 +224,9 @@ app.addEventListener('click', (e) => {
 
   const chip = target.closest<HTMLButtonElement>('[data-filter]');
   if (chip) {
-    const [, id] = parseRoute(location.hash);
+    const [section, id] = parseRoute(location.hash);
     const f = chip.dataset.filter as Filter;
-    replaceRoute(`#/muscle/${id}${f === 'all' ? '' : `/${f}`}`);
+    replaceRoute(`#/${section}/${id}${f === 'all' ? '' : `/${f}`}`);
     return;
   }
 
@@ -249,7 +251,7 @@ app.addEventListener('click', (e) => {
     const root = (seg ?? toggle)!.closest<HTMLElement>('[data-timer]');
     if (!s || !root) return;
     if (seg) startTimer(root, planFor(s), Number(seg.dataset.seg));
-    else if (toggle!.dataset.running === 'true') resetTimerUI(root, holdSeconds(s));
+    else if (toggle!.dataset.running === 'true') resetTimerUI(root, s.holdSeconds);
     else startTimer(root, planFor(s));
   }
 });
@@ -268,7 +270,7 @@ document.addEventListener('visibilitychange', () => {
   if (!document.hidden) return;
   const root = contentEl.querySelector<HTMLElement>('[data-timer]');
   const s = currentStretch();
-  if (root && s && root.dataset.kind !== 'idle' && root.dataset.kind !== 'done') resetTimerUI(root, holdSeconds(s));
+  if (root && s && root.dataset.kind !== 'idle' && root.dataset.kind !== 'done') resetTimerUI(root, s.holdSeconds);
 });
 
 // Enables :active styles on iOS Safari.

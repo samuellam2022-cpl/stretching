@@ -4,54 +4,67 @@ export interface Localized {
   zh: string;
 }
 
-/** How the stretch is done. */
+/** How the stretch is done by the user: alone, with a partner, or with equipment. */
 export type StretchType = 'solo' | 'partner' | 'equipment';
+
+/** Stretching method. */
+export type Technique = 'static' | 'dynamic' | 'pnf';
 
 export type MapView = 'front' | 'back';
 
-/** A tappable area of the body map, e.g. "neck". */
+/** Top level, e.g. "thigh". Also what a tappable area of the body map opens. */
 export interface Region {
   id: string;
   name: Localized;
-  /** Which side(s) of the body map show this region. */
+  /** Which side(s) of the body map show this region (derived from the map shapes). */
   views: MapView[];
 }
 
+/** Second level, e.g. "hamstrings". */
+export interface MuscleGroup {
+  id: string;
+  name: Localized;
+  region: string;
+  /** Which side(s) of the full-body muscle map show this group (not used by the list UI yet). */
+  mapViews: MapView[];
+  /** Another group this one is reached through on the muscle map (not used by the list UI yet). */
+  alsoVia?: string;
+}
+
+/** Third level, e.g. "semitendinosus". */
 export interface Muscle {
   id: string;
-  /** Region id this muscle is listed under. */
-  region: string;
-  /** Side of the body map used for its location thumbnail. */
-  view: MapView;
   name: Localized;
-  /** Plain-language description of where the muscle is. */
-  where: Localized;
+  group: string;
 }
 
 export interface Stretch {
   /** Unique, URL-safe id, e.g. "neck-side-bend". Favourites are stored by this id. */
   id: string;
   name: Localized;
-  type: StretchType;
   /** One-line description shown in lists. */
   summary: Localized;
-  /** Seconds to hold; defaults to "defaults.holdSeconds" (30). */
-  holdSeconds?: number;
-  /** Number of sets; defaults to "defaults.sets" (2). */
-  sets?: number;
+  technique: Technique;
+  /** Solo, partner or needs equipment (used by the list filter). */
+  mode: StretchType;
+  position: 'standing' | 'sitting' | 'lying' | 'kneeling';
   /** True if the stretch is done on one side, then repeated on the other (each side is timed separately). */
   perSide: boolean;
-  /** Muscle ids. A stretch is listed under each of its primary muscles. */
-  muscles: { primary: string[]; secondary: string[] };
-  /** Items needed (only for type "equipment"). */
+  holdSeconds: number;
+  sets: number;
+  /** Muscle ids or muscle-group ids. A group id stands for every muscle in that group. */
+  primary: string[];
+  secondary: string[];
+  /** Items needed (only for mode "equipment"). */
   equipment?: Localized[];
   steps: Localized[];
+  /** Where you should feel the stretch. */
+  feel: Localized;
+  mistakes: Localized[];
+  /** Cautions. */
   safety: Localized[];
-}
-
-export interface StretchData {
-  defaults: { holdSeconds: number; sets: number };
-  regions: Region[];
-  muscles: Muscle[];
-  stretches: Stretch[];
+  easier: Localized;
+  harder: Localized;
+  /** Image path relative to the site root, or null when there is no image yet. */
+  image: string | null;
 }
