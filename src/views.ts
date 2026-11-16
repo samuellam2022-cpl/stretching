@@ -1,13 +1,32 @@
-import { bodyMapSvg, muscleThumbSvg } from './bodymap';
-import { getMuscle, getRegion, getStretch, holdSeconds, musclesIn, regions, setsOf, stretches, stretchesFor } from './data';
+import { bodyMapSvg } from './bodymap';
+import {
+  getGroup,
+  getMuscle,
+  getRegion,
+  getStretch,
+  groupsIn,
+  hasGroupLevel,
+  musclesInGroup,
+  musclesInRegion,
+  nameOf,
+  regions,
+  stretches,
+  stretchesForMuscle,
+  groupStretches,
+  bucketTotal,
+  type StretchBuckets,
+} from './data';
 import { favouriteIds, isFavourite } from './favourites';
 import { sceneFor } from './figure/scenes';
 import { getLang, loc, locOther, t } from './i18n';
 import { RING_LENGTH, segmentLabel, segmentsOf } from './timer';
-import type { MapView, Muscle, Stretch, StretchType } from './types';
+import type { Localized, MapView, Muscle, MuscleGroup, Stretch, StretchType } from './types';
 
 export type Filter = 'all' | StretchType;
 export const FILTERS: Filter[] = ['all', 'solo', 'partner', 'equipment'];
+
+/** The old illustrated demos are hidden for now; flip this to bring them back (the code is untouched). */
+const SHOW_LEGACY_DEMO = false;
 
 export interface View {
   title: string;
@@ -33,7 +52,7 @@ export const favLabel = (on: boolean): string => t(on ? 'removeFav' : 'addFav');
 
 const typeLabel = (type: StretchType): string => t(type);
 
-const doseText = (s: Stretch): string => t(s.perSide ? 'doseEachSide' : 'dose', { s: holdSeconds(s), n: setsOf(s) });
+const doseText = (s: Stretch): string => t(s.perSide ? 'doseEachSide' : 'dose', { s: s.holdSeconds, n: s.sets });
 
 function favButton(s: Stretch, extraClass = ''): string {
   const on = isFavourite(s.id);
@@ -41,12 +60,14 @@ function favButton(s: Stretch, extraClass = ''): string {
     aria-label="${favLabel(on)}">${starIcon(on)}</button>`;
 }
 
-function stretchCard(s: Stretch, showMuscles = false): string {
+type Role = 'primary' | 'wholeGroup' | 'secondary';
+
+function stretchCard(s: Stretch, showMuscles = false, role?: Role): string {
   const names = showMuscles
-    ? s.muscles.primary
-        .map((id) => getMuscle(id))
-        .filter((m): m is Muscle => !!m)
-        .map((m) => loc(m.name))
+    ? s.primary
+        .map((id) => nameOf(id))
+        .filter((n): n is Localized => !!n)
+        .map((n) => loc(n))
         .join('、')
     : '';
   return `
@@ -55,7 +76,8 @@ function stretchCard(s: Stretch, showMuscles = false): string {
         <span class="card-title">${esc(loc(s.name))}</span>
         <span class="card-summary">${esc(loc(s.summary))}</span>
         <span class="card-meta">
-          <span class="tag tag-${s.type}">${typeLabel(s.type)}</span>
+          <span class="tag tag-${s.mode}">${typeLabel(s.mode)}</span>
+          ${role ? `<span class="tag tag-role role-${role}">${t(role === 'wholeGroup' ? 'roleWholeGroup' : role)}</span>` : ''}
           <span class="meta-hold">⏱ ${doseText(s)}</span>
           ${names ? `<span class="meta-part">${esc(names)}</span>` : ''}
         </span>
@@ -64,23 +86,82 @@ function stretchCard(s: Stretch, showMuscles = false): string {
     </li>`;
 }
 
-/** A muscle row: location picture, both names, where it is, and how many stretches. */
+/** A muscle row: both names and how many stretches. */
 function muscleCard(m: Muscle): string {
-  const n = stretchesFor(m.id).length;
+  const n = bucketTotal(stretchesForMuscle(m.id));
   return `
     <li class="card muscle-card">
       <a class="card-link muscle-link" href="#/muscle/${m.id}">
-        <span class="thumb-box">${muscleThumbSvg(m.id, m.view)}</span>
         <span class="muscle-text">
           <span class="card-title">${esc(loc(m.name))}</span>
           <span class="muscle-other" lang="${getLang() === 'zh' ? 'en' : 'zh-HK'}">${esc(locOther(m.name))}</span>
-          <span class="card-summary">${esc(loc(m.where))}</span>
           <span class="card-meta"><span class="meta-hold">${t('muscleStretchCount', { n })}</span></span>
         </span>
         ${CHEVRON}
       </a>
     </li>`;
 }
+
+/** A muscle-group row: both names, how many muscles and stretches. */
+function groupCard(g: MuscleGroup): string {
+  const nMuscles = musclesInGroup(g.id).length;
+  const gs = groupStretches(g.id);
+  const nStretches = gs.primary.length + gs.secondary.length;
+  return `
+    <li class="card muscle-card">
+      <a class="card-link muscle-link" href="#/group/${g.id}">
+        <span class="muscle-text">
+          <span class="card-title">${esc(loc(g.name))}</span>
+          <span class="muscle-other" lang="${getLang() === 'zh' ? 'en' : 'zh-HK'}">${esc(locOther(g.name))}</span>
+          <span class="card-meta"><span class="meta-hold">${t('groupMuscleCount', { n: nMuscles })} · ${t('muscleStretchCount', { n: nStretches })}</span></span>
+        </span>
+        ${CHEVRON}
+      </a>
+    </li>`;
+}
+
+/** Where "back" from a region's lists goes: the body map with that region selected. */
+const regionRoute = (regionId: string): string => {
+  const r = getRegion(regionId);
+  return r?.views.length ? `#/region/${regionId}/${r.views[0]}` : '#/';
+};
+
+/** Link to a muscle's stretch list, or to the group's list when a stretch names a whole group. */
+const muscleHref = (id: string): string => (getMuscle(id) ? `#/muscle/${id}` : `#/group/${id}`);
+
+const byFilter = (list: Stretch[], filter: Filter): Stretch[] => (filter === 'all' ? list : list.filter((s) => s.mode === filter));
+
+function filterChips(all: Stretch[], filter: Filter): string {
+  return FILTERS.map((f) => {
+    const count = byFilter(all, f).length;
+    const label = f === 'all' ? t('all') : typeLabel(f);
+    return `<button class="chip" role="tab" data-filter="${f}" aria-selected="${f === filter}">
+      ${label} <span class="chip-count">${count}</span></button>`;
+  }).join('');
+}
+
+interface Section {
+  title: string;
+  role?: Role;
+  list: Stretch[];
+}
+
+/** Stretch sections, each with a heading that says how the muscles are involved. */
+function sectionedList(sections: Section[], filter: Filter): string {
+  const parts = sections
+    .map((sec) => ({ ...sec, list: byFilter(sec.list, filter) }))
+    .filter((sec) => sec.list.length)
+    .map(
+      (sec) => `<h3 class="list-heading">${sec.title}</h3>
+      <ul class="cards">${sec.list.map((s) => stretchCard(s, false, sec.role)).join('')}</ul>`,
+    );
+  if (parts.length) return parts.join('');
+  return filter === 'all'
+    ? `<p class="empty">${t('emptyAll')}</p>`
+    : `<p class="empty">${t('emptyFilter', { type: getLang() === 'en' ? typeLabel(filter).toLowerCase() : typeLabel(filter) })}</p>`;
+}
+
+const uniqueCount = (lists: Stretch[][]): Stretch[] => lists.flat();
 
 /** Main screen: the body map (front/back), and below it the muscles of the selected region. */
 export function homeView(view: MapView, regionId?: string): View {
@@ -101,10 +182,16 @@ export function homeView(view: MapView, regionId?: string): View {
     )
     .join('');
 
+  // Regions with several groups list the groups; arm, core and lower leg skip that level.
   const list = region
-    ? `<section class="region-panel" data-region-panel>
+    ? hasGroupLevel(region.id)
+      ? `<section class="region-panel" data-region-panel>
+        <h2 class="panel-title">${t('regionGroups', { region: esc(loc(region.name)) })}</h2>
+        <ul class="cards">${groupsIn(region.id).map(groupCard).join('')}</ul>
+      </section>`
+      : `<section class="region-panel" data-region-panel>
         <h2 class="panel-title">${t('regionMuscles', { region: esc(loc(region.name)) })}</h2>
-        <ul class="cards">${musclesIn(region.id).map(muscleCard).join('')}</ul>
+        <ul class="cards">${musclesInRegion(region.id).map(muscleCard).join('')}</ul>
       </section>`
     : '';
 
@@ -121,73 +208,121 @@ export function homeView(view: MapView, regionId?: string): View {
   };
 }
 
-/** Third level: every stretch that has this muscle as a primary muscle. */
+/** Header block shared by the group and muscle screens. */
+function listHead(crumb: string, name: Localized): string {
+  return `
+      <div class="muscle-head">
+        <div>
+          <p class="detail-part">${esc(crumb)}</p>
+          <h1 class="detail-title">${esc(loc(name))}</h1>
+          <p class="muscle-other" lang="${getLang() === 'zh' ? 'en' : 'zh-HK'}">${esc(locOther(name))}</p>
+        </div>
+      </div>`;
+}
+
+/** Group screen: pick a muscle, or just see every stretch for the whole group. */
+export function groupView(id: string, filter: Filter): View | null {
+  const g = getGroup(id);
+  if (!g) return null;
+  const region = getRegion(g.region);
+  const gs = groupStretches(g.id);
+  const all = uniqueCount([gs.primary, gs.secondary]);
+  return {
+    title: loc(g.name),
+    parent: regionRoute(g.region),
+    tab: 'browse',
+    html: `
+      ${listHead(region ? loc(region.name) : '', g.name)}
+      <h2 class="panel-title">${t('groupMuscles')}</h2>
+      <ul class="cards">${musclesInGroup(g.id).map(muscleCard).join('')}</ul>
+      <h2 class="panel-title">${t('groupStretches')}</h2>
+      <div class="chips" role="tablist" aria-label="${t('filterLabel')}">${filterChips(all, filter)}</div>
+      ${sectionedList(
+        [
+          { title: t('secPrimaryGroup'), role: 'primary', list: gs.primary },
+          { title: t('secSecondaryGroup'), role: 'secondary', list: gs.secondary },
+        ],
+        filter,
+      )}`,
+  };
+}
+
+/** Last list level: every stretch that has this muscle as a primary muscle. */
 export function muscleView(id: string, filter: Filter): View | null {
   const m = getMuscle(id);
   if (!m) return null;
-  const region = getRegion(m.region);
-  const all = stretchesFor(m.id);
-  const shown = filter === 'all' ? all : all.filter((s) => s.type === filter);
-
-  const chips = FILTERS.map((f) => {
-    const count = f === 'all' ? all.length : all.filter((s) => s.type === f).length;
-    const label = f === 'all' ? t('all') : typeLabel(f);
-    return `<button class="chip" role="tab" data-filter="${f}" aria-selected="${f === filter}">
-      ${label} <span class="chip-count">${count}</span></button>`;
-  }).join('');
-
-  const list = shown.length
-    ? `<ul class="cards">${shown.map((s) => stretchCard(s)).join('')}</ul>`
-    : `<p class="empty">${t('emptyFilter', {
-        type: getLang() === 'en' ? typeLabel(filter as StretchType).toLowerCase() : typeLabel(filter as StretchType),
-      })}</p>`;
-
+  const group = getGroup(m.group);
+  const region = group && getRegion(group.region);
+  const b: StretchBuckets = stretchesForMuscle(m.id);
+  const all = uniqueCount([b.primary, b.wholeGroup, b.secondary, b.coverage]);
+  const crumb = [region && loc(region.name), group && hasGroupLevel(group.region) && loc(group.name)].filter(Boolean).join(' · ');
   return {
     title: loc(m.name),
-    parent: `#/region/${m.region}/${m.view}`,
+    parent: group && hasGroupLevel(group.region) ? `#/group/${group.id}` : regionRoute(group?.region ?? ''),
     tab: 'browse',
     html: `
-      <div class="muscle-head">
-        <span class="thumb-box thumb-lg">${muscleThumbSvg(m.id, m.view)}</span>
-        <div>
-          <p class="detail-part">${region ? esc(loc(region.name)) : ''}</p>
-          <h1 class="detail-title">${esc(loc(m.name))}</h1>
-          <p class="muscle-other" lang="${getLang() === 'zh' ? 'en' : 'zh-HK'}">${esc(locOther(m.name))}</p>
-          <p class="card-summary">${esc(loc(m.where))}</p>
-        </div>
-      </div>
+      ${listHead(crumb, m.name)}
       <h2 class="panel-title">${t('stretchesFor')}</h2>
-      <div class="chips" role="tablist" aria-label="${t('filterLabel')}">${chips}</div>
-      ${list}`,
+      <div class="chips" role="tablist" aria-label="${t('filterLabel')}">${filterChips(all, filter)}</div>
+      ${sectionedList(
+        [
+          { title: t('secPrimaryMuscle'), role: 'primary', list: b.primary },
+          { title: t('secWholeGroup'), role: 'wholeGroup', list: b.wholeGroup },
+          { title: t('secSecondaryMuscle'), role: 'secondary', list: b.secondary },
+          { title: t('secCoverage'), role: 'wholeGroup', list: b.coverage },
+        ],
+        filter,
+      )}`,
   };
+}
+
+/** Bullet list section; empty lists render nothing. */
+function listSection(title: string, items: Localized[], cls = ''): string {
+  return items.length
+    ? `<section class="section ${cls}"><h2>${title}</h2><ul>${items.map((i) => `<li>${esc(loc(i))}</li>`).join('')}</ul></section>`
+    : '';
+}
+
+/** The picture area. Always reserves its space so the page doesn't jump when images arrive. */
+function mediaBlock(s: Stretch): string {
+  if (SHOW_LEGACY_DEMO && sceneFor(s.id)) {
+    return `<div class="demo" data-demo="${esc(s.id)}"></div>
+        <p class="demo-legend">
+          <span><span class="demo-swatch swatch-primary" aria-hidden="true"></span>${t('legendPrimary')}</span>
+          ${s.secondary.length ? `<span><span class="demo-swatch swatch-secondary" aria-hidden="true"></span>${t('legendSecondary')}</span>` : ''}
+        </p>
+        <p class="demo-reduced">${t('demoReduced')}</p>`;
+  }
+  if (s.image) {
+    return `<div class="media"><img src="${esc(import.meta.env.BASE_URL + s.image.replace(/^\//, ''))}" alt="${esc(loc(s.name))}" loading="lazy" /></div>`;
+  }
+  return `<div class="media media-placeholder" role="img" aria-label="${t('imageSoon')}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm0 11l5-5 4 4 3-3 5 5M9 9.5h.01"/></svg>
+          <span>${t('imageSoon')}</span>
+        </div>`;
 }
 
 export function stretchView(id: string): View | null {
   const s = getStretch(id);
   if (!s) return null;
-  const first = getMuscle(s.muscles.primary[0]);
-  const hold = holdSeconds(s);
-  const sets = setsOf(s);
+  const first = s.primary[0];
+  const hold = s.holdSeconds;
+  const sets = s.sets;
   const equipment = s.equipment?.length
     ? `<section class="section"><h2>${t('youNeed')}</h2><ul class="equipment">${s.equipment
         .map((e) => `<li>${esc(loc(e))}</li>`)
         .join('')}</ul></section>`
     : '';
-  const safety = s.safety.length
-    ? `<section class="section safety"><h2>${t('safety')}</h2><ul>${s.safety
-        .map((n) => `<li>${esc(loc(n))}</li>`)
-        .join('')}</ul></section>`
-    : '';
 
-  // Muscle tags link to that muscle's stretch list.
+  // Muscle tags link to that muscle's stretch list (or the group's, when the stretch names a whole group).
   const tags = (ids: string[], cls: string) =>
     ids
-      .map((mid) => getMuscle(mid))
-      .filter((m): m is Muscle => !!m)
-      .map((m) => `<li><a class="muscle ${cls}" href="#/muscle/${m.id}">${esc(loc(m.name))}${CHEVRON}</a></li>`)
+      .map((mid) => ({ mid, name: nameOf(mid) }))
+      .filter((x): x is { mid: string; name: Localized } => !!x.name)
+      .map(({ mid, name }) => `<li><a class="muscle ${cls}" href="${muscleHref(mid)}">${esc(loc(name))}${CHEVRON}</a></li>`)
       .join('');
-  const primary = tags(s.muscles.primary, 'muscle-primary');
-  const secondary = tags(s.muscles.secondary, 'muscle-secondary');
+  const primary = tags(s.primary, 'muscle-primary');
+  const secondary = tags(s.secondary, 'muscle-secondary');
   const muscleRows =
     `<div class="muscle-row"><span class="muscle-label">${t('primaryMuscles')}</span><ul class="muscle-list">${primary}</ul></div>` +
     (secondary
@@ -198,22 +333,30 @@ export function stretchView(id: string): View | null {
   const video = `https://www.youtube.com/results?search_query=${encodeURIComponent(s.name.en)}`;
   const demo = `
       <section class="demo-card">
-        ${
-          sceneFor(s.id)
-            ? `<div class="demo" data-demo="${esc(s.id)}"></div>
-        <p class="demo-legend">
-          <span><span class="demo-swatch swatch-primary" aria-hidden="true"></span>${t('legendPrimary')}</span>
-          ${s.muscles.secondary.length ? `<span><span class="demo-swatch swatch-secondary" aria-hidden="true"></span>${t('legendSecondary')}</span>` : ''}
-        </p>
-        <p class="demo-reduced">${t('demoReduced')}</p>`
-            : ''
-        }
+        ${mediaBlock(s)}
         ${muscleRows}
         <a class="btn-video" href="${video}" target="_blank" rel="noopener noreferrer">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13l11-6.5z"/></svg>
           <span>${t('demoVideo')}</span><span class="btn-video-hint">${t('demoVideoHint')}</span>
         </a>
       </section>`;
+
+  const facts = `
+      <dl class="facts">
+        <div><dt>${t('technique')}</dt><dd>${t(s.technique)}</dd></div>
+        <div><dt>${t('holdTime')}</dt><dd>${t('holdSeconds', { s: hold })}</dd></div>
+        <div><dt>${t('setsLabel')}</dt><dd>${sets}</dd></div>
+        <div><dt>${t('perSideLabel')}</dt><dd>${t(s.perSide ? 'perSideYes' : 'perSideNo')}</dd></div>
+      </dl>`;
+
+  const feel = s.feel ? `<section class="section"><h2>${t('feel')}</h2><p class="section-text">${esc(loc(s.feel))}</p></section>` : '';
+  const variations =
+    s.easier || s.harder
+      ? `<section class="section variations">
+        ${s.easier ? `<h2>${t('easier')}</h2><p class="section-text">${esc(loc(s.easier))}</p>` : ''}
+        ${s.harder ? `<h2>${t('harder')}</h2><p class="section-text">${esc(loc(s.harder))}</p>` : ''}
+      </section>`
+      : '';
 
   const segs = segmentsOf({ holdSeconds: hold, sets, perSide: s.perSide });
   const segChips = segs
@@ -222,17 +365,18 @@ export function stretchView(id: string): View | null {
 
   return {
     title: loc(s.name),
-    parent: first ? `#/muscle/${first.id}` : '#/',
+    parent: first ? muscleHref(first) : '#/',
     tab: 'browse',
     html: `
       <div class="detail-head">
         <div>
           <h1 class="detail-title">${esc(loc(s.name))}</h1>
-          <span class="tag tag-${s.type}">${typeLabel(s.type)}</span>
+          <span class="tag tag-${s.mode}">${typeLabel(s.mode)}</span>
         </div>
         ${favButton(s, 'fav-btn-lg')}
       </div>
       <p class="lead">${esc(loc(s.summary))}</p>
+      ${facts}
       ${demo}
 
       <section class="timer" data-timer data-kind="idle">
@@ -261,7 +405,10 @@ export function stretchView(id: string): View | null {
         <h2>${t('steps')}</h2>
         <ol class="steps">${s.steps.map((st) => `<li>${esc(loc(st))}</li>`).join('')}</ol>
       </section>
-      ${safety}`,
+      ${feel}
+      ${listSection(t('mistakes'), s.mistakes ?? [])}
+      ${listSection(t('safety'), s.safety ?? [], 'safety')}
+      ${variations}`,
   };
 }
 

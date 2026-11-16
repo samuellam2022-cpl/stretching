@@ -1,5 +1,5 @@
 import '../src/style.css';
-import { getMuscle, stretches } from '../src/data';
+import { nameOf, stretches } from '../src/data';
 import { mountDemo, svgFor, type Demo, type DemoLabel } from '../src/figure/player';
 import { sceneFor } from '../src/figure/scenes';
 
@@ -21,13 +21,13 @@ stretches.forEach((s, i) => {
   g.append(cell);
   if (!scene) return;
   const label = (id: string, level: DemoLabel['level']): DemoLabel => {
-    const m = getMuscle(id)!;
-    return { id, level, title: en ? m.name.en : m.name.zh, sub: en ? m.name.zh : m.name.en, levelText: en ? (level === 'primary' ? 'Primary' : 'Secondary') : level === 'primary' ? '主要' : '次要' };
+    const m = nameOf(id)!;
+    return { id, level, title: en ? m.en : m.zh, sub: en ? m.zh : m.en, levelText: en ? (level === 'primary' ? 'Primary' : 'Secondary') : level === 'primary' ? '主要' : '次要' };
   };
   const demo: Demo = {
     scene,
-    muscles: s.muscles,
-    labels: [...s.muscles.primary.map((id) => label(id, 'primary')), ...s.muscles.secondary.map((id) => label(id, 'secondary'))],
+    muscles: { primary: s.primary, secondary: s.secondary },
+    labels: [...s.primary.map((id) => label(id, 'primary')), ...s.secondary.map((id) => label(id, 'secondary'))],
     arrowText: scene.arrow ? (en ? scene.arrow.label.en : scene.arrow.label.zh) : '',
     aria: s.name.en,
   };

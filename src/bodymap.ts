@@ -69,12 +69,39 @@ function head(view: MapView): string {
 /** Region shapes for one side of the map. */
 export const regionShapes = (view: MapView): RegionShape[] => (view === 'front' ? FRONT : BACK);
 
-/** The interactive body map. Regions carry data-region; the selected one gets the "sel" class. */
+/**
+ * The map is drawn in finer areas than the muscles.json regions (e.g. three
+ * thigh areas, upper and lower back). Each area opens one region.
+ */
+const AREA_REGION: Record<string, string> = {
+  neck: 'neck',
+  shoulders: 'shoulder',
+  arms: 'arm',
+  chest: 'chest',
+  core: 'core',
+  'upper-back': 'back',
+  'lower-back': 'back',
+  hips: 'hip',
+  glutes: 'hip',
+  'front-thigh': 'thigh',
+  'inner-thigh': 'thigh',
+  'back-thigh': 'thigh',
+  calves: 'lower-leg',
+};
+
+/** Which muscles.json region a map area opens. */
+export const regionOfArea = (areaId: string): string => AREA_REGION[areaId] ?? areaId;
+
+/** Sides of the body map on which a region has a tappable area. */
+export const regionViews = (regionId: string): MapView[] =>
+  (['front', 'back'] as MapView[]).filter((v) => regionShapes(v).some((r) => regionOfArea(r.id) === regionId));
+
+/** The interactive body map. Areas carry data-region (a muscles.json region id); the selected region's areas get the "sel" class. */
 export function bodyMapSvg(view: MapView, selected: string | undefined, label: (regionId: string) => string, aria: string): string {
   const regions = regionShapes(view)
     .map(
       (r) =>
-        `<path class="map-region${r.id === selected ? ' sel' : ''}" data-region="${r.id}" role="button" tabindex="0" aria-label="${label(r.id)}" aria-pressed="${r.id === selected}" d="${r.d}"/>`,
+        `<path class="map-region${regionOfArea(r.id) === selected ? ' sel' : ''}" data-region="${regionOfArea(r.id)}" role="button" tabindex="0" aria-label="${label(regionOfArea(r.id))}" aria-pressed="${regionOfArea(r.id) === selected}" d="${r.d}"/>`,
     )
     .join('');
   return `<svg class="bodymap" viewBox="0 0 200 412" role="group" aria-label="${aria}">${head(view)}<path class="map-extra" d="${EXTRAS}"/>${regions}</svg>`;
