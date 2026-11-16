@@ -1,4 +1,6 @@
-import raw from './data/stretches.json';
+// The current screens still use the previous data format. The new three-level data
+// (data/muscles.json + data/stretches.json) is not wired into the UI yet.
+import raw from './data/stretches.legacy.json';
 import type { Localized, Muscle, Region, Stretch, StretchData, StretchType } from './types';
 
 const TYPES: StretchType[] = ['solo', 'partner', 'equipment'];
