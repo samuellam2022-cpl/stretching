@@ -1,4 +1,4 @@
-import { bodyMapSvg, groupChips } from './bodymap';
+import { bodyMapSvg, groupChips, groupsOnMap } from './bodymap';
 import {
   getGroup,
   getMuscle,
@@ -181,10 +181,15 @@ export function homeView(view: MapView, regionId?: string): View {
     t('mapAria', { view: viewName }),
     (id) => esc(loc(getGroup(id)!.name)),
   );
+  const onMap = new Set(groupsOnMap(view));
   const groupChipRow = groupChips(view)
     .map((id) => getGroup(id))
     .filter((g): g is MuscleGroup => !!g)
-    .map((g) => `<a class="chip group-chip" href="#/group/${g.id}">${esc(loc(g.name))}</a>`)
+    .map((g) =>
+      onMap.has(g.id)
+        ? `<a class="chip group-chip" data-tint="${g.id}" href="#/group/${g.id}"><span class="chip-dot" aria-hidden="true"></span>${esc(loc(g.name))}</a>`
+        : `<a class="chip group-chip" href="#/group/${g.id}">${esc(loc(g.name))}</a>`,
+    )
     .join('');
 
   const regionChips = regions

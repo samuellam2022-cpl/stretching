@@ -1104,6 +1104,48 @@ svg {
 .map-region:focus-visible { stroke: var(--accent); stroke-width: 2; }
 .map-region.sel { fill: var(--accent); }
 
+/*
+ * Muscle-group areas: a muted tint so they read as tappable. Hues are the app's
+ * existing blue, purple, amber and star colours, mixed lightly into the map colour.
+ * Shapes that are not tappable (knees, hips, the back-view medial strip) keep the
+ * plain map colours. Browsers without color-mix just show the plain colour.
+ */
+[data-tint='quadriceps'],
+.map-region[data-group='quadriceps'] { --hue: var(--solo); }
+[data-tint='adductors'],
+.map-region[data-group='adductors'] { --hue: var(--partner); }
+[data-tint='lateral-thigh'],
+.map-region[data-group='lateral-thigh'] { --hue: var(--equipment); }
+[data-tint='hamstrings'],
+.map-region[data-group='hamstrings'] { --hue: var(--star); }
+
+.map-region[data-group] {
+  --tint: 22%;
+  --tint-strong: 36%;
+  fill: color-mix(in srgb, var(--hue) var(--tint), var(--map-region));
+}
+
+/* Pressed, keyboard-focused or selected (its region chosen): the same hue, stronger. */
+.map-region[data-group]:active,
+.map-region[data-group]:focus-visible,
+.map-region[data-group].sel {
+  fill: color-mix(in srgb, var(--hue) var(--tint-strong), var(--map-region));
+}
+
+@media (prefers-color-scheme: dark) {
+  .map-region[data-group] {
+    --tint: 18%;
+    --tint-strong: 32%;
+  }
+}
+
+.chip-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--hue) 70%, var(--map-region));
+}
+
 .region-chips {
   margin-bottom: 4px;
 }

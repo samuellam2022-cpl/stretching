@@ -151,6 +151,12 @@ export const regionOfArea = (areaId: string): string => AREA_REGION[areaId] ?? a
 export const regionViews = (regionId: string): MapView[] =>
   (['front', 'back'] as MapView[]).filter((v) => regionShapes(v).some((r) => !r.inert && regionOfArea(r.id) === regionId));
 
+/** Groups that have a tappable area on this side of the map. */
+export const groupsOnMap = (view: MapView): string[] =>
+  regionShapes(view)
+    .filter((r) => r.group && !r.inert)
+    .map((r) => r.group!);
+
 /**
  * Groups offered as chips under the map, for groups that are small, deep or
  * partly hidden on that side. (Thigh pilot: other regions still open by region.)
