@@ -213,10 +213,10 @@ export function homeView(view: MapView, regionId?: string): View {
     html: `
       <p class="lead">${t('homeLead')}</p>
       <div class="seg" role="tablist" aria-label="${t('viewToggle')}">${toggle}</div>
-      <div class="map-wrap">${map}</div>
-      <p class="map-note">${t('mapNote')}</p>
       <p class="chips-title">${t('groupChipsTitle')}</p>
       <div class="chips group-chips">${groupChipRow}</div>
+      <div class="map-wrap">${map}</div>
+      <p class="map-note">${t('mapNote')}${view === 'back' ? ` ${t('mapNoteBack')}` : ''}</p>
       <div class="chips region-chips" aria-label="${t('allRegions')}">${regionChips}</div>
       ${list}
       <p class="disclaimer">${t('disclaimer')}</p>`,

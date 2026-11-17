@@ -46,7 +46,11 @@ const STRINGS = {
   langToggle: { en: 'Switch language', zh: '切換語言' },
   tabMap: { en: 'Muscles', zh: '肌肉圖' },
   tabFavourites: { en: 'Favourites', zh: '我的最愛' },
-  groupChipsTitle: { en: 'Muscle groups (or tap the map)', zh: '肌肉群（亦可以撳人體圖）' },
+  groupChipsTitle: { en: 'Thigh muscle groups (or tap the map)', zh: '大腿肌肉群（亦可以撳人體圖）' },
+  mapNoteBack: {
+    en: 'The lighter strip on the inner thigh is not tappable: the adductors (gracilis, adductor magnus) are only partly visible from behind. Use the Adductors chip.',
+    zh: '大腿內側較淺色嘅條帶唔可以撳：內收肌（股薄肌、內收大肌）喺背面只係部分睇到。請用「內收肌」標籤。',
+  },
   mapNote: { en: 'Areas show where a group sits on the surface. Deeper muscles lie underneath and are reached from the group page.', zh: '圖上範圍顯示肌肉群喺身體表面嘅位置。較深層嘅肌肉喺下面，可以喺肌肉群頁面揀。' },
   homeLead: { en: 'Tap the part of the body you just trained.', zh: '撳啱啱練完嘅身體部位。' },
   mapAria: { en: 'Body map, {view} view', zh: '人體肌肉圖（{view}）' },

@@ -42,9 +42,14 @@ const LOWER_LEG = both([[67, 330], [89, 330], [90, 350], [86, 385], [74, 385], [
  *    wide down the outer thigh. The band lies over vastus lateralis.
  *    Sartorius is NOT drawn: it crosses diagonally over the quadriceps, so a
  *    separate area would split the quadriceps. It is on the Lateral thigh group page.
- *  - Adductors (front): medial thigh from the pubic region, narrowing to a point
- *    about two thirds of the way down (gracilis and adductor longus/pectineus).
- *    Below that point the inner front of the thigh is vastus medialis, i.e. quadriceps.
+ *  - Adductors (front): the surface-visible adductors only. Adductor longus is a
+ *    triangular belly (about 14 units wide at the top, the medial border of the
+ *    femoral triangle); gracilis is the most superficial and most medial adductor
+ *    and runs the full length of the thigh to the medial tibia, so the area ends as
+ *    a thin strip (about 4 units) along the inner edge down to the knee.
+ *    Adductor brevis and most of adductor magnus lie deep to these, and pectineus
+ *    is the floor of the femoral triangle, so none of them is drawn: they are on
+ *    the group page. Vastus medialis (quadriceps) lies lateral to the strip.
  *  - Quadriceps (front): the rest of the front of the thigh, down to the knee.
  *    Rectus femoris, vastus lateralis and vastus medialis show on the surface;
  *    vastus intermedius lies underneath them.
@@ -57,8 +62,8 @@ const LOWER_LEG = both([[67, 330], [89, 330], [90, 350], [86, 385], [74, 385], [
  */
 const THIGH_FRONT_OUTLINE: P[] = [[62, 206], [78, 218], [86, 224], [100, 226], [98, 250], [94, 285], [90, 312], [66, 312], [60, 285], [57, 245], [58, 220]];
 const THIGH_LATERAL: P[] = [[62, 206], [72, 213.5], [70, 225], [68, 240], [64.5, 255], [66, 285], [71, 312], [66, 312], [60, 285], [57, 245], [58, 220]];
-const THIGH_QUADRICEPS: P[] = [[72, 213.5], [78, 218], [86, 224], [87, 238], [89, 252], [90.7, 266], [92, 280], [93, 292], [90, 312], [71, 312], [66, 285], [64.5, 255], [68, 240], [70, 225]];
-const THIGH_ADDUCTORS: P[] = [[86, 224], [100, 226], [98, 250], [94, 285], [93, 292], [92, 280], [90.7, 266], [89, 252], [87, 238]];
+const THIGH_QUADRICEPS: P[] = [[72, 213.5], [78, 218], [86, 224], [87, 238], [88.8, 252], [89.8, 266], [90.2, 280], [88.4, 296], [86, 312], [71, 312], [66, 285], [64.5, 255], [68, 240], [70, 225]];
+const THIGH_ADDUCTORS: P[] = [[86, 224], [100, 226], [98, 250], [94, 285], [90, 312], [86, 312], [88.4, 296], [90.2, 280], [89.8, 266], [88.8, 252], [87, 238]];
 const THIGH_BACK_OUTLINE: P[] = [[63, 236], [100, 240], [98, 255], [94, 285], [90, 312], [66, 312], [60, 285], [57, 250]];
 const THIGH_HAMSTRINGS: P[] = [[63, 236], [95, 239.46], [92.5, 255], [90.5, 270], [90, 285], [90, 298], [90, 312], [66, 312], [60, 285], [57, 250]];
 const THIGH_BACK_MEDIAL_STRIP: P[] = [[95, 239.46], [100, 240], [98, 255], [94, 285], [90, 312], [90, 298], [90, 285], [90.5, 270], [92.5, 255]];
