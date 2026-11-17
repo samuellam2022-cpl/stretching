@@ -206,6 +206,13 @@ app.addEventListener('click', (e) => {
     return;
   }
 
+  // A muscle-group area on the map goes straight to that group's page.
+  const group = target.closest<SVGElement>('[data-group]');
+  if (group) {
+    location.hash = `#/group/${group.dataset.group}`;
+    return;
+  }
+
   const region = target.closest<SVGElement>('[data-region]');
   if (region) {
     selectRegion(region.dataset.region!);
@@ -258,10 +265,11 @@ app.addEventListener('click', (e) => {
 
 // Body-map regions are focusable; Enter/Space selects like a tap.
 app.addEventListener('keydown', (e) => {
-  const region = (e.target as HTMLElement).closest<SVGElement>('[data-region]');
-  if (region && (e.key === 'Enter' || e.key === ' ')) {
+  const area = (e.target as HTMLElement).closest<SVGElement>('[data-region], [data-group]');
+  if (area && (e.key === 'Enter' || e.key === ' ')) {
     e.preventDefault();
-    selectRegion(region.dataset.region!);
+    if (area.dataset.group) location.hash = `#/group/${area.dataset.group}`;
+    else selectRegion(area.dataset.region!);
   }
 });
 

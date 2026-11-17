@@ -1078,11 +1078,9 @@ svg {
 }
 
 .bodymap {
-  /* Whole body visible above the tab bar on a phone, without scrolling. */
-  height: min(52vh, 460px);
-  height: min(52dvh, 460px);
-  width: auto;
-  max-width: 100%;
+  /* Drawn large (about 2 px per drawing unit) so muscle areas are big enough to tap. */
+  width: min(100%, 300px);
+  height: auto;
   touch-action: manipulation;
 }
 
@@ -1094,7 +1092,7 @@ svg {
 .map-region {
   fill: var(--map-region);
   stroke: var(--bg);
-  stroke-width: 1.8;
+  stroke-width: 1.1;
   stroke-linejoin: round;
   cursor: pointer;
   transition: fill 0.12s ease;
@@ -1103,7 +1101,7 @@ svg {
 }
 
 .map-region:active { fill: var(--accent-soft); }
-.map-region:focus-visible { stroke: var(--accent); stroke-width: 3; }
+.map-region:focus-visible { stroke: var(--accent); stroke-width: 2; }
 .map-region.sel { fill: var(--accent); }
 
 .region-chips {
@@ -1338,4 +1336,23 @@ svg {
 .role-primary {
   background: var(--accent-soft);
   color: var(--accent);
+}
+
+/* Muscle-group chips under the map */
+.group-chips {
+  margin-top: 4px;
+}
+
+.chips-title {
+  margin: 12px 2px 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.map-note {
+  max-width: 34em;
+  margin: 0 2px 4px;
+  font-size: 13px;
+  color: var(--muted);
 }

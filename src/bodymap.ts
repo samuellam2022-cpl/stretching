@@ -17,6 +17,10 @@ const both = (pts: P[]): string => path(pts) + path(mirror(pts));
 interface RegionShape {
   id: string;
   d: string;
+  /** Set when the area is one muscle group (tapping opens that group) rather than a whole region. */
+  group?: string;
+  /** Drawn as part of the body but not tappable (like knees and hands). */
+  inert?: boolean;
 }
 
 // Shared between front and back.
@@ -25,6 +29,49 @@ const SHOULDER = both([[80, 74], [66, 76], [56, 82], [51, 94], [52, 108], [60, 1
 const ARM = both([[52, 108], [60, 104], [64, 112], [63, 128], [58, 150], [55, 172], [50, 200], [46, 232], [38, 230], [40, 198], [43, 170], [46, 140]]);
 const LOWER_LEG = both([[67, 330], [89, 330], [90, 350], [86, 385], [74, 385], [66, 352]]);
 
+/**
+ * Thigh, left leg as drawn (the person's right leg on the front view); mirrored
+ * for the other leg. The three front areas and the back area tile the old thigh
+ * outline exactly, so nothing overlaps and nothing is left over, except the
+ * medial strip on the back (see below).
+ *
+ * Units: 1 unit is roughly 0.4 cm (thigh length about 106 units for about 42 cm).
+ * Boundaries follow surface landmarks, approximately:
+ *  - Lateral thigh (front): tensor fasciae latae, a belly about 12 units wide just
+ *    below the hip bone, narrowing into the iliotibial band, a strip about 7 units
+ *    wide down the outer thigh. The band lies over vastus lateralis.
+ *    Sartorius is NOT drawn: it crosses diagonally over the quadriceps, so a
+ *    separate area would split the quadriceps. It is on the Lateral thigh group page.
+ *  - Adductors (front): medial thigh from the pubic region, narrowing to a point
+ *    about two thirds of the way down (gracilis and adductor longus/pectineus).
+ *    Below that point the inner front of the thigh is vastus medialis, i.e. quadriceps.
+ *  - Quadriceps (front): the rest of the front of the thigh, down to the knee.
+ *    Rectus femoris, vastus lateralis and vastus medialis show on the surface;
+ *    vastus intermedius lies underneath them.
+ *  - Hamstrings (back): from the gluteal fold to the knee. The medial strip beside
+ *    them (gracilis and the upper adductor magnus) is deliberately not tappable:
+ *    its edge with semitendinosus is not clear on a flat figure, and the data lists
+ *    Adductors as a front-view group. Adductors stays one tap away in the chips.
+ *  - The iliotibial band is not drawn on the back: only its edge is visible there.
+ *  - Hip flexors (iliacus, psoas) are deep and have no area; they are in the chips.
+ */
+const THIGH_FRONT_OUTLINE: P[] = [[62, 206], [78, 218], [86, 224], [100, 226], [98, 250], [94, 285], [90, 312], [66, 312], [60, 285], [57, 245], [58, 220]];
+const THIGH_LATERAL: P[] = [[62, 206], [72, 213.5], [70, 225], [68, 240], [64.5, 255], [66, 285], [71, 312], [66, 312], [60, 285], [57, 245], [58, 220]];
+const THIGH_QUADRICEPS: P[] = [[72, 213.5], [78, 218], [86, 224], [87, 238], [89, 252], [90.7, 266], [92, 280], [93, 292], [90, 312], [71, 312], [66, 285], [64.5, 255], [68, 240], [70, 225]];
+const THIGH_ADDUCTORS: P[] = [[86, 224], [100, 226], [98, 250], [94, 285], [93, 292], [92, 280], [90.7, 266], [89, 252], [87, 238]];
+const THIGH_BACK_OUTLINE: P[] = [[63, 236], [100, 240], [98, 255], [94, 285], [90, 312], [66, 312], [60, 285], [57, 250]];
+const THIGH_HAMSTRINGS: P[] = [[63, 236], [95, 239.46], [92.5, 255], [90.5, 270], [90, 285], [90, 298], [90, 312], [66, 312], [60, 285], [57, 250]];
+const THIGH_BACK_MEDIAL_STRIP: P[] = [[95, 239.46], [100, 240], [98, 255], [94, 285], [90, 312], [90, 298], [90, 285], [90.5, 270], [92.5, 255]];
+
+/** Exposed so the map's geometry can be checked (tiling, sizes) without rendering. */
+export const THIGH_GEOMETRY = {
+  frontOutline: THIGH_FRONT_OUTLINE,
+  backOutline: THIGH_BACK_OUTLINE,
+  front: { 'lateral-thigh': THIGH_LATERAL, quadriceps: THIGH_QUADRICEPS, adductors: THIGH_ADDUCTORS },
+  back: { hamstrings: THIGH_HAMSTRINGS },
+  backMedialStrip: THIGH_BACK_MEDIAL_STRIP,
+};
+
 const FRONT: RegionShape[] = [
   { id: 'neck', d: NECK },
   { id: 'shoulders', d: SHOULDER },
@@ -32,8 +79,9 @@ const FRONT: RegionShape[] = [
   { id: 'chest', d: path([[80, 74], [74, 86], [66, 94], [64, 112], [70, 128], [100, 132], [130, 128], [136, 112], [134, 94], [126, 86], [120, 74]]) },
   { id: 'core', d: path([[70, 128], [100, 132], [130, 128], [129, 150], [128, 172], [132, 188], [100, 194], [68, 188], [72, 172], [71, 150]]) },
   { id: 'hips', d: path([[68, 188], [100, 194], [132, 188], [138, 206], [122, 218], [100, 226], [78, 218], [62, 206]]) },
-  { id: 'front-thigh', d: both([[62, 206], [78, 218], [86, 224], [88, 250], [86, 290], [84, 312], [66, 312], [60, 285], [57, 245], [58, 220]]) },
-  { id: 'inner-thigh', d: both([[86, 224], [100, 226], [98, 250], [94, 285], [90, 312], [84, 312], [86, 290], [88, 250]]) },
+  { id: 'lateral-thigh', group: 'lateral-thigh', d: both(THIGH_LATERAL) },
+  { id: 'quadriceps', group: 'quadriceps', d: both(THIGH_QUADRICEPS) },
+  { id: 'adductors', group: 'adductors', d: both(THIGH_ADDUCTORS) },
   { id: 'calves', d: LOWER_LEG },
 ];
 
@@ -44,7 +92,8 @@ const BACK: RegionShape[] = [
   { id: 'upper-back', d: path([[80, 74], [74, 86], [66, 94], [64, 112], [68, 140], [72, 160], [100, 164], [128, 160], [132, 140], [136, 112], [134, 94], [126, 86], [120, 74]]) },
   { id: 'lower-back', d: path([[72, 160], [100, 164], [128, 160], [128, 176], [132, 192], [100, 196], [68, 192], [72, 176]]) },
   { id: 'glutes', d: path([[68, 192], [100, 196], [132, 192], [140, 214], [137, 236], [100, 240], [63, 236], [60, 214]]) },
-  { id: 'back-thigh', d: both([[63, 236], [100, 240], [98, 255], [94, 285], [90, 312], [66, 312], [60, 285], [57, 250]]) },
+  { id: 'hamstrings', group: 'hamstrings', d: both(THIGH_HAMSTRINGS) },
+  { id: 'thigh-medial-back', inert: true, d: both(THIGH_BACK_MEDIAL_STRIP) },
   { id: 'calves', d: LOWER_LEG },
 ];
 
@@ -83,9 +132,10 @@ const AREA_REGION: Record<string, string> = {
   'lower-back': 'back',
   hips: 'hip',
   glutes: 'hip',
-  'front-thigh': 'thigh',
-  'inner-thigh': 'thigh',
-  'back-thigh': 'thigh',
+  'lateral-thigh': 'thigh',
+  quadriceps: 'thigh',
+  adductors: 'thigh',
+  hamstrings: 'thigh',
   calves: 'lower-leg',
 };
 
@@ -94,17 +144,35 @@ export const regionOfArea = (areaId: string): string => AREA_REGION[areaId] ?? a
 
 /** Sides of the body map on which a region has a tappable area. */
 export const regionViews = (regionId: string): MapView[] =>
-  (['front', 'back'] as MapView[]).filter((v) => regionShapes(v).some((r) => regionOfArea(r.id) === regionId));
+  (['front', 'back'] as MapView[]).filter((v) => regionShapes(v).some((r) => !r.inert && regionOfArea(r.id) === regionId));
 
-/** The interactive body map. Areas carry data-region (a muscles.json region id); the selected region's areas get the "sel" class. */
-export function bodyMapSvg(view: MapView, selected: string | undefined, label: (regionId: string) => string, aria: string): string {
-  const regions = regionShapes(view)
-    .map(
-      (r) =>
-        `<path class="map-region${regionOfArea(r.id) === selected ? ' sel' : ''}" data-region="${regionOfArea(r.id)}" role="button" tabindex="0" aria-label="${label(regionOfArea(r.id))}" aria-pressed="${regionOfArea(r.id) === selected}" d="${r.d}"/>`,
-    )
+/**
+ * Groups offered as chips under the map, for groups that are small, deep or
+ * partly hidden on that side. (Thigh pilot: other regions still open by region.)
+ */
+export const groupChips = (view: MapView): string[] =>
+  view === 'front' ? ['quadriceps', 'adductors', 'lateral-thigh', 'hip-flexors'] : ['hamstrings', 'adductors', 'lateral-thigh'];
+
+/** The interactive body map. Areas carry data-region (a muscles.json region id) or data-group (a muscle group id); the selected region's areas get the "sel" class. */
+export function bodyMapSvg(
+  view: MapView,
+  selected: string | undefined,
+  label: (regionId: string) => string,
+  aria: string,
+  groupLabel: (groupId: string) => string,
+): string {
+  const areas = regionShapes(view)
+    .map((r) => {
+      if (r.inert) return `<path class="map-extra" aria-hidden="true" d="${r.d}"/>`;
+      const region = regionOfArea(r.id);
+      const sel = region === selected;
+      const target = r.group ? `data-group="${r.group}"` : `data-region="${region}"`;
+      const name = r.group ? groupLabel(r.group) : label(region);
+      return `<path class="map-region${sel ? ' sel' : ''}" ${target} role="button" tabindex="0" aria-label="${name}" d="${r.d}"/>`;
+    })
     .join('');
-  return `<svg class="bodymap" viewBox="0 0 200 412" role="group" aria-label="${aria}">${head(view)}<path class="map-extra" d="${EXTRAS}"/>${regions}</svg>`;
+  // Cropped to the body so the map can be drawn large on a phone.
+  return `<svg class="bodymap" viewBox="28 8 144 396" role="group" aria-label="${aria}">${head(view)}<path class="map-extra" d="${EXTRAS}"/>${areas}</svg>`;
 }
 
 // ---------- muscle location pictures ----------

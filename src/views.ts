@@ -1,4 +1,4 @@
-import { bodyMapSvg } from './bodymap';
+import { bodyMapSvg, groupChips } from './bodymap';
 import {
   getGroup,
   getMuscle,
@@ -121,9 +121,10 @@ function groupCard(g: MuscleGroup): string {
 }
 
 /** Where "back" from a region's lists goes: the body map with that region selected. */
-const regionRoute = (regionId: string): string => {
+const regionRoute = (regionId: string, preferred?: MapView): string => {
   const r = getRegion(regionId);
-  return r?.views.length ? `#/region/${regionId}/${r.views[0]}` : '#/';
+  if (!r?.views.length) return '#/';
+  return `#/region/${regionId}/${preferred && r.views.includes(preferred) ? preferred : r.views[0]}`;
 };
 
 /** Link to a muscle's stretch list, or to the group's list when a stretch names a whole group. */
@@ -173,7 +174,18 @@ export function homeView(view: MapView, regionId?: string): View {
         `<button class="seg-btn" role="tab" data-map-view="${v}" aria-selected="${v === view}">${t(v === 'front' ? 'front' : 'backView')}</button>`,
     )
     .join('');
-  const map = bodyMapSvg(view, region?.id, (id) => esc(loc(getRegion(id)!.name)), t('mapAria', { view: viewName }));
+  const map = bodyMapSvg(
+    view,
+    region?.id,
+    (id) => esc(loc(getRegion(id)!.name)),
+    t('mapAria', { view: viewName }),
+    (id) => esc(loc(getGroup(id)!.name)),
+  );
+  const groupChipRow = groupChips(view)
+    .map((id) => getGroup(id))
+    .filter((g): g is MuscleGroup => !!g)
+    .map((g) => `<a class="chip group-chip" href="#/group/${g.id}">${esc(loc(g.name))}</a>`)
+    .join('');
 
   const regionChips = regions
     .map(
@@ -202,6 +214,9 @@ export function homeView(view: MapView, regionId?: string): View {
       <p class="lead">${t('homeLead')}</p>
       <div class="seg" role="tablist" aria-label="${t('viewToggle')}">${toggle}</div>
       <div class="map-wrap">${map}</div>
+      <p class="map-note">${t('mapNote')}</p>
+      <p class="chips-title">${t('groupChipsTitle')}</p>
+      <div class="chips group-chips">${groupChipRow}</div>
       <div class="chips region-chips" aria-label="${t('allRegions')}">${regionChips}</div>
       ${list}
       <p class="disclaimer">${t('disclaimer')}</p>`,
@@ -229,7 +244,7 @@ export function groupView(id: string, filter: Filter): View | null {
   const all = uniqueCount([gs.primary, gs.secondary]);
   return {
     title: loc(g.name),
-    parent: regionRoute(g.region),
+    parent: regionRoute(g.region, g.mapViews[0]),
     tab: 'browse',
     html: `
       ${listHead(region ? loc(region.name) : '', g.name)}
