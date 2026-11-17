@@ -36,6 +36,8 @@ export interface Muscle {
   id: string;
   name: Localized;
   group: string;
+  /** Where the muscle sits, in plain words. Only some muscles have it. */
+  location?: Localized;
 }
 
 export interface Stretch {

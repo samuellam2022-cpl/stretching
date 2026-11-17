@@ -1186,6 +1186,13 @@ svg {
   margin-bottom: 4px;
 }
 
+.muscle-location {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
 .muscle-head .detail-title {
   margin-bottom: 2px;
   font-size: 24px;

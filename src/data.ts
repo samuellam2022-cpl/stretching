@@ -13,7 +13,7 @@ interface RawNamed {
 interface RawMuscles {
   regions: RawNamed[];
   groups: (RawNamed & { region: string; mapViews: MapView[]; alsoVia?: string })[];
-  muscles: (RawNamed & { group: string })[];
+  muscles: (RawNamed & { group: string; location?: Localized })[];
 }
 
 const MODES: StretchType[] = ['solo', 'partner', 'equipment'];
@@ -34,7 +34,7 @@ export const groups: MuscleGroup[] = rawMuscles.groups.map((g) => ({
   mapViews: g.mapViews,
   alsoVia: g.alsoVia,
 }));
-export const muscles: Muscle[] = rawMuscles.muscles.map((m) => ({ id: m.id, name: name(m), group: m.group }));
+export const muscles: Muscle[] = rawMuscles.muscles.map((m) => ({ id: m.id, name: name(m), group: m.group, location: m.location }));
 
 const regionIds = new Set(regions.map((r) => r.id));
 const groupIds = new Set(groups.map((g) => g.id));
