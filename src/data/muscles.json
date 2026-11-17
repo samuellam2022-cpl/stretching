@@ -25,7 +25,7 @@
     { "id": "quadriceps", "zh": "股四頭肌", "en": "Quadriceps", "region": "thigh", "mapViews": ["front"] },
     { "id": "hamstrings", "zh": "膕繩肌", "en": "Hamstrings", "region": "thigh", "mapViews": ["back"] },
     { "id": "adductors", "zh": "內收肌", "en": "Adductors", "region": "thigh", "mapViews": ["front"] },
-    { "id": "lateral-thigh", "zh": "外側／其他", "en": "Outer thigh / other", "region": "thigh", "mapViews": ["front", "back"] },
+    { "id": "lateral-thigh", "zh": "外側大腿", "en": "Lateral thigh", "region": "thigh", "mapViews": ["front", "back"] },
     { "id": "gluteals", "zh": "臀肌", "en": "Gluteals", "region": "hip", "mapViews": ["back"] },
     { "id": "deep-rotators", "zh": "深層外旋", "en": "Deep external rotators", "region": "hip", "mapViews": [], "alsoVia": "gluteals" },
     { "id": "hip-flexors", "zh": "髖屈肌", "en": "Hip flexors", "region": "hip", "mapViews": ["front"] },
