@@ -209,13 +209,20 @@ export function homeView(view: MapView, regionId?: string): View {
 }
 
 /** Header block shared by the group and muscle screens. */
-function listHead(crumb: string, name: Localized): string {
+function listHead(crumb: string, name: Localized, location?: Localized): string {
+  // Optional "where is it" lines under the names; nothing is rendered when there is no location.
+  const cur = getLang();
+  const locLines = location
+    ? `
+          <p class="muscle-location" lang="${cur === 'zh' ? 'zh-HK' : 'en'}">${esc(loc(location))}</p>
+          <p class="muscle-location" lang="${cur === 'zh' ? 'en' : 'zh-HK'}">${esc(locOther(location))}</p>`
+    : '';
   return `
       <div class="muscle-head">
         <div>
           <p class="detail-part">${esc(crumb)}</p>
           <h1 class="detail-title">${esc(loc(name))}</h1>
-          <p class="muscle-other" lang="${getLang() === 'zh' ? 'en' : 'zh-HK'}">${esc(locOther(name))}</p>
+          <p class="muscle-other" lang="${getLang() === 'zh' ? 'en' : 'zh-HK'}">${esc(locOther(name))}</p>${locLines}
         </div>
       </div>`;
 }
@@ -261,7 +268,7 @@ export function muscleView(id: string, filter: Filter): View | null {
     parent: group && hasGroupLevel(group.region) ? `#/group/${group.id}` : regionRoute(group?.region ?? ''),
     tab: 'browse',
     html: `
-      ${listHead(crumb, m.name)}
+      ${listHead(crumb, m.name, m.location)}
       <h2 class="panel-title">${t('stretchesFor')}</h2>
       <div class="chips" role="tablist" aria-label="${t('filterLabel')}">${filterChips(all, filter)}</div>
       ${sectionedList(
