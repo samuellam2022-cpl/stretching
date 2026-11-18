@@ -13,6 +13,8 @@ import {
   groupView,
   homeView,
   muscleView,
+  pickMuscle,
+  clearPickedMuscle,
   notFoundView,
   starIcon,
   stretchView,
@@ -131,6 +133,7 @@ function render(): void {
   const hash = location.hash || '#/';
   const sameScreen = !!currentRoute && routeKey(currentRoute) === routeKey(hash);
   currentRoute = hash;
+  if (!sameScreen) clearPickedMuscle(); // a chosen muscle only lasts while its group screen is open
   current = resolve(hash);
 
   titleEl.textContent = current.title;
@@ -174,6 +177,15 @@ const currentStretch = (): Stretch | undefined => {
 };
 const planFor = (s: Stretch): TimerPlan => ({ holdSeconds: s.holdSeconds, sets: s.sets, perSide: s.perSide });
 
+/** Hamstrings picture: choose a muscle, redraw in place (same route, scroll kept); keyboard picks keep focus on the shape. */
+function choose(id: string, fromKeyboard = false): void {
+  pickMuscle(id);
+  render();
+  // Bring the name and location into view under the picture.
+  window.setTimeout(() => contentEl.querySelector('.ham-panel')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60);
+  if (fromKeyboard) contentEl.querySelector<HTMLElement | SVGElement>(`.ham-map [data-pick-muscle="${id}"]`)?.focus({ preventScroll: true });
+}
+
 function selectRegion(regionId: string): void {
   const [section, , view] = parseRoute(location.hash);
   const mapView = contentEl.querySelector<HTMLElement>('[data-map-view][aria-selected="true"]')?.dataset.mapView ?? view ?? 'front';
@@ -203,6 +215,12 @@ app.addEventListener('click', (e) => {
     fav.classList.remove('pop');
     void fav.offsetWidth; // restart animation
     fav.classList.add('pop');
+    return;
+  }
+
+  const pick = target.closest<HTMLElement | SVGElement>('[data-pick-muscle]');
+  if (pick) {
+    choose(pick.dataset.pickMuscle!);
     return;
   }
 
@@ -258,6 +276,12 @@ app.addEventListener('click', (e) => {
 
 // Body-map regions are focusable; Enter/Space selects like a tap.
 app.addEventListener('keydown', (e) => {
+  const pick = (e.target as HTMLElement).closest<SVGElement>('[data-pick-muscle]');
+  if (pick && (e.key === 'Enter' || e.key === ' ')) {
+    e.preventDefault();
+    choose(pick.dataset.pickMuscle!, true);
+    return;
+  }
   const region = (e.target as HTMLElement).closest<SVGElement>('[data-region]');
   if (region && (e.key === 'Enter' || e.key === ' ')) {
     e.preventDefault();

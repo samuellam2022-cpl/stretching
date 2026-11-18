@@ -19,6 +19,9 @@
   --partner-bg: #f4e6f8;
   --equipment: #b45309;
   --equipment-bg: #fdecd9;
+  --ham-bf: #7fb0e3;
+  --ham-st: #f0b866;
+  --ham-sm: #c39ad8;
   --radius: 16px;
   --tap: 44px;
   --topbar-h: 52px;
@@ -50,6 +53,9 @@
     --partner-bg: #2f1d36;
     --equipment: #f2a65e;
     --equipment-bg: #3a2512;
+    --ham-bf: #5b8fc4;
+    --ham-st: #d49a4a;
+    --ham-sm: #a97bc0;
   }
 }
 
@@ -1338,4 +1344,181 @@ svg {
 .role-primary {
   background: var(--accent-soft);
   color: var(--accent);
+}
+
+/* ---------- Hamstrings pilot: picture-based muscle picker ---------- */
+
+.ham-figure {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 8px;
+  padding: 8px 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.ham-map {
+  /* Same sizing idea as the body map: whole picture visible on a phone without taking the whole screen. */
+  height: min(50vh, 420px);
+  height: min(50dvh, 420px);
+  width: auto;
+  max-width: 100%;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ham-thigh {
+  fill: var(--surface-2);
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.ham-muscle {
+  stroke: var(--surface);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: fill-opacity 0.12s ease;
+}
+
+.ham-muscle[data-m='biceps-femoris'] { fill: var(--ham-bf); }
+.ham-muscle[data-m='semitendinosus'] { fill: var(--ham-st); }
+.ham-muscle[data-m='semimembranosus'] { fill: var(--ham-sm); }
+
+/* Once one is chosen the others step back; the chosen one gets a dark outline. */
+.ham-map[data-has-selection] .ham-muscle {
+  fill-opacity: 0.45;
+}
+
+.ham-map .ham-muscle[data-on='true'] {
+  fill-opacity: 1;
+  stroke: var(--text);
+  stroke-width: 3;
+}
+
+.ham-muscle:focus {
+  outline: none;
+}
+
+.ham-muscle:focus-visible {
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.ham-label {
+  pointer-events: none;
+}
+
+.ham-label line {
+  stroke: var(--text);
+  stroke-width: 1;
+  opacity: 0.7;
+}
+
+.ham-label circle {
+  fill: var(--text);
+}
+
+.ham-label text,
+.ham-side {
+  fill: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ham-side {
+  fill: var(--muted);
+  font-size: 10.5px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.ham-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.ham-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--tap);
+  padding: 0 14px 0 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.ham-key[aria-pressed='true'] {
+  border-color: var(--text);
+  border-width: 2px;
+  font-weight: 700;
+}
+
+.ham-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--surface-2);
+}
+
+.ham-key[data-m='biceps-femoris'] .ham-swatch { background: var(--ham-bf); }
+.ham-key[data-m='semitendinosus'] .ham-swatch { background: var(--ham-st); }
+.ham-key[data-m='semimembranosus'] .ham-swatch { background: var(--ham-sm); }
+
+.ham-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  margin: 0 0 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.ham-hint {
+  margin: 0;
+  color: var(--muted);
+}
+
+.ham-name {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.ham-name-other {
+  margin: 0;
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.ham-location {
+  margin: 8px 0 0;
+  font-size: 15px;
+}
+
+.ham-location-other {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.ham-go {
+  margin-top: 12px;
+  gap: 6px;
+}
+
+.ham-note {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
 }
