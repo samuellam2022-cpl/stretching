@@ -18,6 +18,7 @@ import {
 } from './data';
 import { favouriteIds, isFavourite } from './favourites';
 import { sceneFor } from './figure/scenes';
+import { HAMSTRING_IDS, hamstringMapSvg } from './hamstringMap';
 import { getLang, loc, locOther, t } from './i18n';
 import { RING_LENGTH, segmentLabel, segmentsOf } from './timer';
 import type { Localized, MapView, Muscle, MuscleGroup, Stretch, StretchType } from './types';
@@ -220,6 +221,56 @@ function listHead(crumb: string, name: Localized): string {
       </div>`;
 }
 
+// ---------- Hamstrings pilot: pick a muscle on a drawing instead of from a list ----------
+
+/** Groups that use the picture instead of the muscle list (pilot: hamstrings only). */
+const hasMuscleMap = (groupId: string): boolean => groupId === 'hamstrings';
+
+/** Muscle chosen on the picture. Lives only while the group screen is open. */
+let pickedMuscle: string | undefined;
+export const pickMuscle = (id: string): void => {
+  if (HAMSTRING_IDS.includes(id)) pickedMuscle = id;
+};
+export const clearPickedMuscle = (): void => {
+  pickedMuscle = undefined;
+};
+
+/** Name, location and the way on to the stretch list for the muscle chosen on the picture. */
+function pickedPanel(m: Muscle | undefined): string {
+  if (!m) return `<div class="ham-panel" aria-live="polite"><p class="ham-hint">${t('hamHint')}</p></div>`;
+  const lang = getLang() === 'zh' ? 'en' : 'zh-HK';
+  const here = getLang() === 'zh' ? 'zh-HK' : 'en';
+  const where = m.location
+    ? `<p class="ham-location" lang="${here}">${esc(loc(m.location))}</p>
+      <p class="ham-location ham-location-other" lang="${lang}">${esc(locOther(m.location))}</p>`
+    : '';
+  const n = bucketTotal(stretchesForMuscle(m.id));
+  return `<div class="ham-panel" aria-live="polite" data-picked="${m.id}">
+      <h3 class="ham-name" lang="${here}">${esc(loc(m.name))}</h3>
+      <p class="ham-name-other" lang="${lang}">${esc(locOther(m.name))}</p>
+      ${where}
+      <a class="btn-primary ham-go" href="#/muscle/${m.id}">${t('hamSeeStretches', { n })}${CHEVRON}</a>
+    </div>`;
+}
+
+/** The drawing, a colour key (also tappable) and the panel for the chosen muscle. */
+function muscleMapBlock(group: MuscleGroup): string {
+  const list = musclesInGroup(group.id);
+  const picked = list.find((m) => m.id === pickedMuscle);
+  const keys = list
+    .map(
+      (m) =>
+        `<button class="ham-key" data-pick-muscle="${m.id}" data-m="${m.id}" aria-pressed="${m.id === picked?.id}"><span class="ham-swatch" aria-hidden="true"></span>${esc(loc(m.name).replace(/\s*[（(].*$/, ''))}</button>`,
+    )
+    .join('');
+  return `
+      <h2 class="panel-title">${t('hamPick')}</h2>
+      <div class="ham-figure">${hamstringMapSvg(picked?.id)}</div>
+      <div class="ham-keys">${keys}</div>
+      ${pickedPanel(picked)}
+      <p class="ham-note">${t('hamNote')}</p>`;
+}
+
 /** Group screen: pick a muscle, or just see every stretch for the whole group. */
 export function groupView(id: string, filter: Filter): View | null {
   const g = getGroup(id);
@@ -233,8 +284,12 @@ export function groupView(id: string, filter: Filter): View | null {
     tab: 'browse',
     html: `
       ${listHead(region ? loc(region.name) : '', g.name)}
-      <h2 class="panel-title">${t('groupMuscles')}</h2>
-      <ul class="cards">${musclesInGroup(g.id).map(muscleCard).join('')}</ul>
+      ${
+        hasMuscleMap(g.id)
+          ? muscleMapBlock(g)
+          : `<h2 class="panel-title">${t('groupMuscles')}</h2>
+      <ul class="cards">${musclesInGroup(g.id).map(muscleCard).join('')}</ul>`
+      }
       <h2 class="panel-title">${t('groupStretches')}</h2>
       <div class="chips" role="tablist" aria-label="${t('filterLabel')}">${filterChips(all, filter)}</div>
       ${sectionedList(
