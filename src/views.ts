@@ -199,10 +199,10 @@ export function homeView(view: MapView, regionId?: string): View {
     title: t('appName'),
     tab: 'browse',
     html: `
+      <div class="chips region-chips" aria-label="${t('allRegions')}">${regionChips}</div>
       <p class="lead">${t('homeLead')}</p>
       <div class="seg" role="tablist" aria-label="${t('viewToggle')}">${toggle}</div>
       <div class="map-wrap">${map}</div>
-      <div class="chips region-chips" aria-label="${t('allRegions')}">${regionChips}</div>
       ${list}
       <p class="disclaimer">${t('disclaimer')}</p>`,
   };
